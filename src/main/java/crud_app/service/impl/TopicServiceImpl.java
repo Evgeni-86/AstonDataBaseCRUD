@@ -1,28 +1,37 @@
 package crud_app.service.impl;
 
+import crud_app.dto.TopicDto;
 import crud_app.entity.Topic;
 import crud_app.repository.TopicRepository;
+import crud_app.repository.impl.TopicRepositoryImpl;
 import crud_app.service.TopicService;
 
 import java.util.List;
+import java.util.Optional;
 
 public class TopicServiceImpl implements TopicService {
 
-    private TopicRepository topicRepository;
+    private TopicRepository topicRepository = new TopicRepositoryImpl();
 
     @Override
-    public Topic save(Topic topic) {
-        return topicRepository.createTopic(topic);
+    public TopicDto save(TopicDto topic) {
+        Topic newTopic = new Topic(topic.getId(), topic.getName());
+        Topic result = topicRepository.createTopic(newTopic);
+        topic.setId(result.getId());
+        return topic;
     }
 
     @Override
-    public Topic update(Topic topic) {
-        return topicRepository.updateTopic(topic);
+    public TopicDto update(TopicDto topic) {
+        Topic updateTopic = new Topic(topic.getId(), topic.getName());
+        topicRepository.updateTopic(updateTopic);
+        return topic;
     }
 
     @Override
-    public Topic get(int topicId) {
-        return topicRepository.getTopic(topicId);
+    public TopicDto get(int topicId) {
+        Topic topic = topicRepository.getTopic(topicId);
+        return TopicDto.toDTO(topic);
     }
 
     @Override
@@ -31,7 +40,7 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public List<Topic> getAll() {
-        return topicRepository.getAllTopic();
+    public List<TopicDto> getAll() {
+        return topicRepository.getAllTopic().stream().map(e -> TopicDto.toDTO(e)).toList();
     }
 }

@@ -1,13 +1,13 @@
 package crud_app.service;
 
-import crud_app.entity.Topic;
+import crud_app.dto.TopicDto;
 
 import java.util.List;
 
 public interface TopicService {
-    Topic save(Topic topic);
-    Topic update(Topic topic);
-    Topic get(int topicId);
+    TopicDto save(TopicDto topic);
+    TopicDto update(TopicDto topic);
+    TopicDto get(int topicId);
     boolean remove(int topicId);
-    List<Topic> getAll();
+    List<TopicDto> getAll();
 }

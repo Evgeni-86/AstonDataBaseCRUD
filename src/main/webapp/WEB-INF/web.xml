@@ -13,7 +13,7 @@
 </servlet>
 <servlet-mapping>
     <servlet-name>TopicServlet</servlet-name>
-    <url-pattern>/topic</url-pattern>
+    <url-pattern>/topics/*</url-pattern>
 </servlet-mapping>
 <servlet>
     <servlet-name>TopicMessageServlet</servlet-name>
@@ -21,7 +21,7 @@
 </servlet>
 <servlet-mapping>
     <servlet-name>TopicMessageServlet</servlet-name>
-    <url-pattern>/message</url-pattern>
+    <url-pattern>/messages/*</url-pattern>
 </servlet-mapping>
 
 </web-app>

@@ -6,7 +6,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.util.Properties;
 
-public abstract class AbstractRepositoryTest {
+public abstract class AbstractTest {
 
     private static PostgreSQLContainer<?> postgresDBContainer = new PostgreSQLContainer<>("postgres:15")
             .withInitScript("init.sql");

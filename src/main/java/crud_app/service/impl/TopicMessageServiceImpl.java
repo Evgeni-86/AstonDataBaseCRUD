@@ -7,7 +7,7 @@ import java.util.List;
 
 public class TopicMessageServiceImpl implements MessageRepository {
 
-    private MessageRepository messageRepository;
+    private MessageRepository messageRepository = new TopicMessageServiceImpl();
 
     @Override
     public TopicMessage createMessage(int topicId, TopicMessage topicMessage) {

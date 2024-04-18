@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-class TopicRepositoryImplTest extends AbstractRepositoryTest {
+class TopicImplTest extends AbstractTest {
 
     private TopicRepositoryImpl SUT = new TopicRepositoryImpl();
     private MessageRepositoryImpl messageRepository = new MessageRepositoryImpl();

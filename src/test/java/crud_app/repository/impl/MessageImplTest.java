@@ -7,7 +7,7 @@ import org.junit.jupiter.api.*;
 import java.util.List;
 
 
-class MessageRepositoryImplTest extends AbstractRepositoryTest {
+class MessageImplTest extends AbstractTest {
 
     private MessageRepositoryImpl SUT = new MessageRepositoryImpl();
     private TopicRepositoryImpl topicRepository = new TopicRepositoryImpl();

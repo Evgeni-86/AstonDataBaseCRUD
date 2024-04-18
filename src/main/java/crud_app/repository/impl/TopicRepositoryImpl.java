@@ -7,6 +7,7 @@ import crud_app.utils.TopicMapper;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 public class TopicRepositoryImpl implements TopicRepository {
