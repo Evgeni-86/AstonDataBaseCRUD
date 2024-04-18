@@ -1,36 +1,59 @@
 package crud_app.service.impl;
 
+import crud_app.dto.TopicMessageDto;
+import crud_app.entity.Topic;
 import crud_app.entity.TopicMessage;
 import crud_app.repository.MessageRepository;
+import crud_app.repository.impl.MessageRepositoryImpl;
+import crud_app.service.TopicMessageService;
 
 import java.util.List;
 
-public class TopicMessageServiceImpl implements MessageRepository {
+public class TopicMessageServiceImpl implements TopicMessageService {
 
-    private MessageRepository messageRepository = new TopicMessageServiceImpl();
+    private MessageRepository messageRepository = new MessageRepositoryImpl();
 
     @Override
-    public TopicMessage createMessage(int topicId, TopicMessage topicMessage) {
-        return messageRepository.createMessage(topicId, topicMessage);
+    public TopicMessageDto create(TopicMessageDto topicMessage) {
+        Topic topic = new Topic();
+        topic.setId(topicMessage.getTopicId());
+        TopicMessage message = new TopicMessage(
+                topicMessage.getId(),
+                topicMessage.getTitle(),
+                topicMessage.getBody(),
+                topic);
+        TopicMessage result = messageRepository.createMessage(message);
+        topicMessage.setId(result.getId());
+        return topicMessage;
     }
 
     @Override
-    public TopicMessage updateMessage(TopicMessage topicMessage) {
-        return messageRepository.updateMessage(topicMessage);
+    public TopicMessageDto update(TopicMessageDto topicMessage) {
+        Topic topic = new Topic();
+        topic.setId(topicMessage.getTopicId());
+        TopicMessage message = new TopicMessage(
+                topicMessage.getId(),
+                topicMessage.getTitle(),
+                topicMessage.getBody(),
+                topic);
+        messageRepository.updateMessage(message);
+        return topicMessage;
     }
 
     @Override
-    public TopicMessage getMessage(int messageId) {
-        return messageRepository.getMessage(messageId);
+    public TopicMessageDto get(int messageId) {
+        TopicMessage message = messageRepository.getMessage(messageId);
+        return TopicMessageDto.toDTO(message);
     }
 
     @Override
-    public boolean removeMessage(int messageId) {
+    public boolean remove(int messageId) {
         return messageRepository.removeMessage(messageId);
     }
 
     @Override
-    public List<TopicMessage> getAllMessageTopic(int topicId) {
-        return messageRepository.getAllMessageTopic(topicId);
+    public List<TopicMessageDto> getAllMessage(int topicId) {
+        return messageRepository.getAllMessageTopic(topicId).stream()
+                .map(e -> TopicMessageDto.toDTO(e)).toList();
     }
 }

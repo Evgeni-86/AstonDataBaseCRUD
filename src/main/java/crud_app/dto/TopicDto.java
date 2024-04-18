@@ -3,6 +3,8 @@ package crud_app.dto;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import crud_app.entity.Topic;
 
+import java.util.Objects;
+
 public class TopicDto {
     private int id;
     private String name;
@@ -37,5 +39,26 @@ public class TopicDto {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TopicDto topicDto = (TopicDto) o;
+        return id == topicDto.id && Objects.equals(name, topicDto.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
+    }
+
+    @Override
+    public String toString() {
+        return "TopicDto{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
     }
 }

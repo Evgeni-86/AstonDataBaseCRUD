@@ -5,7 +5,7 @@ import crud_app.dto.TopicDto;
 import java.util.List;
 
 public interface TopicService {
-    TopicDto save(TopicDto topic);
+    TopicDto create(TopicDto topic);
     TopicDto update(TopicDto topic);
     TopicDto get(int topicId);
     boolean remove(int topicId);

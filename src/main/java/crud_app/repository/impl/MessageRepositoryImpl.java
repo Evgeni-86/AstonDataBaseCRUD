@@ -15,17 +15,18 @@ import java.util.List;
 public class MessageRepositoryImpl implements MessageRepository {
 
     private final String createQuery = "INSERT INTO topic_messages (topic_id, title, body) VALUES (?, ?, ?)";
-    private final String readQuery = "SELECT * FROM topic_messages WHERE id = ?";
+    private final String readQuery = "SELECT * FROM topic_messages JOIN topics ON topic_messages.topic_id = topics.id WHERE topic_messages.id = ?";
     private final String updateQuery = "UPDATE topic_messages SET title = ?, body = ? WHERE id = ?";
     private final String removeQuery = "DELETE FROM topic_messages WHERE id = ?";
-    private final String getAllMessageTopicQuery = "SELECT * FROM topic_messages WHERE topic_id = ?";
+    private final String getAllMessageTopicQuery = "SELECT * FROM topic_messages JOIN topics ON topic_messages.topic_id = topics.id WHERE topic_id = ?";
 
     @Override
-    public TopicMessage createMessage(int topicId, TopicMessage topicMessage) {
+    public TopicMessage createMessage(TopicMessage topicMessage) {
         if (topicMessage.getId() != 0) throw new IllegalStateException("new topic message id must be 0");
+        if (topicMessage.getTopic().getId() == 0) throw new IllegalStateException("topic id not must be 0");
         try (PreparedStatement preparedStatement =
                      DataBase.getConnection().prepareStatement(createQuery, Statement.RETURN_GENERATED_KEYS)) {
-            preparedStatement.setInt(1, topicId);
+            preparedStatement.setInt(1, topicMessage.getTopic().getId());
             preparedStatement.setString(2, topicMessage.getTitle());
             preparedStatement.setString(3, topicMessage.getBody());
             int insertRow = preparedStatement.executeUpdate();
@@ -42,6 +43,7 @@ public class MessageRepositoryImpl implements MessageRepository {
     @Override
     public TopicMessage updateMessage(TopicMessage topicMessage) {
         if (topicMessage.getId() == 0) throw new IllegalStateException("topic message id not must be 0");
+        if (topicMessage.getTopic().getId() == 0) throw new IllegalStateException("topic id not must be 0");
         try (PreparedStatement preparedStatement = DataBase.getConnection().prepareStatement(updateQuery)) {
             preparedStatement.setString(1, topicMessage.getTitle());
             preparedStatement.setString(2, topicMessage.getBody());

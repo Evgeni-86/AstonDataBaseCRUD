@@ -2,10 +2,19 @@ package crud_app.entity;
 
 import java.util.Objects;
 
+
 public class TopicMessage {
     private int id;
     private String title;
     private String body;
+    private Topic topic;
+
+    public TopicMessage(int id, String title, String body, Topic topic) {
+        this.id = id;
+        this.title = title;
+        this.body = body;
+        this.topic = topic;
+    }
 
     public TopicMessage(int id, String title, String body) {
         this.id = id;
@@ -13,8 +22,8 @@ public class TopicMessage {
         this.body = body;
     }
 
-    public TopicMessage(String title, String body) {
-        this(0, title, body);
+    public TopicMessage(String title, String body, Topic topic) {
+        this(0, title, body, topic);
     }
 
     public int getId() {
@@ -23,6 +32,14 @@ public class TopicMessage {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public Topic getTopic() {
+        return topic;
+    }
+
+    public void setTopic(Topic topic) {
+        this.topic = topic;
     }
 
     public String getTitle() {
@@ -45,13 +62,14 @@ public class TopicMessage {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TopicMessage that = (TopicMessage) o;
-        return id == that.id && Objects.equals(title, that.title) && Objects.equals(body, that.body);
+        TopicMessage message = (TopicMessage) o;
+        return id == message.id && Objects.equals(title, message.title)
+                && Objects.equals(body, message.body) && Objects.equals(topic.getId(), message.topic.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, body);
+        return Objects.hash(id, title, body, topic.getId());
     }
 
     @Override
@@ -60,6 +78,7 @@ public class TopicMessage {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", body='" + body + '\'' +
+                ", topic id=" + topic.getId() +
                 '}';
     }
 }

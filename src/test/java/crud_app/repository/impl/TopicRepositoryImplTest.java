@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-class TopicImplTest extends AbstractTest {
+class TopicRepositoryImplTest extends AbstractTest {
 
     private TopicRepositoryImpl SUT = new TopicRepositoryImpl();
     private MessageRepositoryImpl messageRepository = new MessageRepositoryImpl();
@@ -61,8 +61,8 @@ class TopicImplTest extends AbstractTest {
         //Arrange
         Topic newTopic = new Topic("New Topic removeTopic");
         SUT.createTopic(newTopic);
-        TopicMessage message = new TopicMessage("Title 1", "Message 1");
-        messageRepository.createMessage(newTopic.getId(), message);
+        TopicMessage message = new TopicMessage("Title 1", "Message 1", newTopic);
+        messageRepository.createMessage(message);
         //Act
         boolean actual = SUT.removeTopic(newTopic.getId());
         //Assert

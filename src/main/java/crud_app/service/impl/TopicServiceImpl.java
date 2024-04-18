@@ -14,7 +14,7 @@ public class TopicServiceImpl implements TopicService {
     private TopicRepository topicRepository = new TopicRepositoryImpl();
 
     @Override
-    public TopicDto save(TopicDto topic) {
+    public TopicDto create(TopicDto topic) {
         Topic newTopic = new Topic(topic.getId(), topic.getName());
         Topic result = topicRepository.createTopic(newTopic);
         topic.setId(result.getId());

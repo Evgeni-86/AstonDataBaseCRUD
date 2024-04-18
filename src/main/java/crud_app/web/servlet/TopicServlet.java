@@ -2,9 +2,13 @@ package crud_app.web.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import crud_app.dto.TopicDto;
+import crud_app.dto.TopicMessageDto;
+import crud_app.service.TopicMessageService;
 import crud_app.service.TopicService;
+import crud_app.service.impl.TopicMessageServiceImpl;
 import crud_app.service.impl.TopicServiceImpl;
 import crud_app.utils.DataBase;
+import crud_app.utils.JsonParser;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
@@ -22,6 +26,7 @@ public class TopicServlet extends HttpServlet {
 
     private TopicService topicService = new TopicServiceImpl();
     private ObjectMapper objectMapper = new ObjectMapper();
+    private TopicMessageService topicMessageService = new TopicMessageServiceImpl();
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -39,8 +44,12 @@ public class TopicServlet extends HttpServlet {
         DataBase.initDataBase();
         TopicDto topic1 = new TopicDto("Topic 1");
         TopicDto topic2 = new TopicDto("Topic 2");
-        topicService.save(topic1);
-        topicService.save(topic2);
+        topicService.create(topic1);
+        topicService.create(topic2);
+        TopicMessageDto topicMessage1 = new TopicMessageDto(topic1.getId(), "Title 1", "Topic 1 message");
+        TopicMessageDto topicMessage2 = new TopicMessageDto(topic1.getId(), "Title 2", "Topic 1 message");
+        topicMessageService.create(topicMessage1);
+        topicMessageService.create(topicMessage2);
         System.out.println("stop init servlet complete");
     }
 
@@ -71,39 +80,28 @@ public class TopicServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String pathInfo = request.getPathInfo();
+
         if (pathInfo == null || pathInfo.equals("/")) {
-            TopicDto topic = objectMapper.readValue(parseJson(request), TopicDto.class);
-            TopicDto result = topicService.save(topic);
+            TopicDto topic = objectMapper.readValue(JsonParser.parseJson(request), TopicDto.class);
+            TopicDto result = topicService.create(topic);
             response.getWriter().write(String.format("new topic save id = %d", result.getId()));
         } else {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
     }
 
-    // PUT/topics/id
+    // PUT/topics/
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String pathInfo = request.getPathInfo();
+
         if (pathInfo == null || pathInfo.equals("/")) {
+            TopicDto topic = objectMapper.readValue(JsonParser.parseJson(request), TopicDto.class);
+            topicService.update(topic);
+            response.getWriter().write(String.format("topic update id = %d", topic.getId()));
+        } else {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            return;
         }
-
-        String[] splits = pathInfo.split("/");
-        if (splits.length != 2 || !splits[1].matches("-?\\d+")) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            return;
-        }
-
-        String topicId = splits[1];
-        TopicDto topic = objectMapper.readValue(parseJson(request), TopicDto.class);
-        if (Integer.parseInt(topicId) != topic.getId()) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            return;
-        }
-
-        topicService.update(topic);
-        response.getWriter().write(String.format("topic update id = %d", topic.getId()));
     }
 
     // DELETE/topics/id
@@ -116,23 +114,13 @@ public class TopicServlet extends HttpServlet {
         }
 
         String[] splits = pathInfo.split("/");
-        if (splits.length != 2 || !splits[1].matches("-?\\d+")) {
+
+        if (splits.length == 2 || splits[1].matches("-?\\d+")) {
+            int topicId = Integer.parseInt(splits[1]);
+            topicService.remove(topicId);
+            response.getWriter().write(String.format("topic by id = %d removed", topicId));
+        } else {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            return;
         }
-
-        int topicId = Integer.parseInt(splits[1]);
-        topicService.remove(topicId);
-        response.getWriter().write(String.format("topic by id = %d removed", topicId));
-    }
-
-    private String parseJson(HttpServletRequest request) throws IOException {
-        StringBuilder buffer = new StringBuilder();
-        BufferedReader reader = request.getReader();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            buffer.append(line);
-        }
-        return buffer.toString();
     }
 }
