@@ -7,6 +7,7 @@ import crud_app.repository.MessageRepository;
 import crud_app.repository.impl.MessageRepositoryImpl;
 import crud_app.service.TopicMessageService;
 
+import java.util.Comparator;
 import java.util.List;
 
 public class TopicMessageServiceImpl implements TopicMessageService {
@@ -54,6 +55,7 @@ public class TopicMessageServiceImpl implements TopicMessageService {
     @Override
     public List<TopicMessageDto> getAllMessage(int topicId) {
         return messageRepository.getAllMessageTopic(topicId).stream()
-                .map(e -> TopicMessageDto.toDTO(e)).toList();
+                .map(e -> TopicMessageDto.toDTO(e))
+                .sorted(Comparator.comparingInt(TopicMessageDto::getId)).toList();
     }
 }

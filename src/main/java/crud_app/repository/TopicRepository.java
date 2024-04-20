@@ -1,17 +1,49 @@
 package crud_app.repository;
 
 import crud_app.entity.Topic;
-import crud_app.entity.TopicMessage;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
-
+/**
+ * this is topic repository interface
+ */
 public interface TopicRepository {
+    /**
+     * method save new topic in database
+     *
+     * @param topic topic for save
+     * @return saved topic
+     */
     Topic createTopic(Topic topic);
+
+    /**
+     * method update topic in database
+     *
+     * @param topic topic for update
+     * @return updated topic
+     */
     Topic updateTopic(Topic topic);
+
+    /**
+     * method read topic from database by id
+     *
+     * @param topicId topic id in database
+     * @return topic from database
+     */
     Topic getTopic(int topicId);
+
+    /**
+     * method removed topic from database by id
+     *
+     * @param topicId topic id in database
+     * @return removed topic
+     */
     boolean removeTopic(int topicId);
+
+    /**
+     * method return all topics from database
+     *
+     * @return topic list
+     */
     List<Topic> getAllTopic();
 }

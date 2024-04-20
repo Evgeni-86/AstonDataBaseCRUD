@@ -2,59 +2,35 @@ package crud_app.web.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import crud_app.dto.TopicDto;
-import crud_app.dto.TopicMessageDto;
-import crud_app.service.TopicMessageService;
 import crud_app.service.TopicService;
-import crud_app.service.impl.TopicMessageServiceImpl;
 import crud_app.service.impl.TopicServiceImpl;
-import crud_app.utils.DataBase;
 import crud_app.utils.JsonParser;
-import jakarta.servlet.ServletConfig;
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 
-
+/**
+ * topic servlet
+ */
 public class TopicServlet extends HttpServlet {
-
+    /**
+     * topic service interface
+     */
     private TopicService topicService = new TopicServiceImpl();
+    /**
+     * object mapper
+     */
     private ObjectMapper objectMapper = new ObjectMapper();
-    private TopicMessageService topicMessageService = new TopicMessageServiceImpl();
 
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        System.out.println("start init servlet complete");
-        super.init(config);
-        try {
-            ServletContext servletContext = this.getServletContext();
-            InputStream inputStreamProperty = servletContext.getResourceAsStream("/WEB-INF/classes/app.properties");
-            Properties properties = new Properties();
-            properties.load(inputStreamProperty);
-            DataBase.setProperties(properties);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to read properties file");
-        }
-        DataBase.initDataBase();
-        TopicDto topic1 = new TopicDto("Topic 1");
-        TopicDto topic2 = new TopicDto("Topic 2");
-        topicService.create(topic1);
-        topicService.create(topic2);
-        TopicMessageDto topicMessage1 = new TopicMessageDto(topic1.getId(), "Title 1", "Topic 1 message");
-        TopicMessageDto topicMessage2 = new TopicMessageDto(topic1.getId(), "Title 2", "Topic 1 message");
-        topicMessageService.create(topicMessage1);
-        topicMessageService.create(topicMessage2);
-        System.out.println("stop init servlet complete");
-    }
-
-    // GET/topics/
-    // GET/topics/id
+    /**
+     * method to process the rest get request
+     *
+     * @param request  request
+     * @param response response
+     * @throws IOException if error
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
@@ -76,7 +52,13 @@ public class TopicServlet extends HttpServlet {
         response.getWriter().write(objectMapper.writeValueAsString(topic));
     }
 
-    // POST/topics/
+    /**
+     * method to process the rest post request
+     *
+     * @param request  request
+     * @param response response
+     * @throws IOException if error
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String pathInfo = request.getPathInfo();
@@ -90,7 +72,13 @@ public class TopicServlet extends HttpServlet {
         }
     }
 
-    // PUT/topics/
+    /**
+     * method to process the rest put request
+     *
+     * @param request  request
+     * @param response response
+     * @throws IOException if error
+     */
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String pathInfo = request.getPathInfo();
@@ -104,7 +92,13 @@ public class TopicServlet extends HttpServlet {
         }
     }
 
-    // DELETE/topics/id
+    /**
+     * method to process the rest delete request
+     *
+     * @param request  request
+     * @param response response
+     * @throws IOException if error
+     */
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String pathInfo = request.getPathInfo();

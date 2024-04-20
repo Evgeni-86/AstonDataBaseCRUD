@@ -1,26 +1,54 @@
 package crud_app.dto;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import crud_app.entity.Topic;
 
 import java.util.Objects;
 
+/**
+ * this is dto class for topic entity
+ */
 public class TopicDto {
+    /**
+     * id topic in database
+     */
     private int id;
+    /**
+     * topic name
+     */
     private String name;
 
+    /**
+     * no args topic dto constructor for use jackson library
+     */
     public TopicDto() {
     }
 
+    /**
+     * topic dto constructor
+     *
+     * @param name topic name
+     */
     public TopicDto(String name) {
         this.name = name;
     }
 
+    /**
+     * topic dto constructor
+     *
+     * @param id   topic id in database
+     * @param name topic name
+     */
     public TopicDto(int id, String name) {
         this.id = id;
         this.name = name;
     }
 
+    /**
+     * method for mapping class Topic to dto
+     *
+     * @param topic topic for mapping
+     * @return dto topic
+     */
     public static TopicDto toDTO(Topic topic) {
         return new TopicDto(topic.getId(), topic.getName());
     }

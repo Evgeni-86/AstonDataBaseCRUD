@@ -1,23 +1,55 @@
 package crud_app.dto;
 
-import crud_app.entity.Topic;
 import crud_app.entity.TopicMessage;
 
 import java.util.Objects;
 
+/**
+ * this is dto class for message entity
+ */
 public class TopicMessageDto {
+    /**
+     * id message in database
+     */
     private int id;
+    /**
+     * this message topic id
+     */
     private int topicId;
+    /**
+     * message title
+     */
     private String title;
+    /**
+     * message text
+     */
     private String body;
 
+    /**
+     * no args message dto constructor for use jackson library
+     */
     public TopicMessageDto() {
     }
 
+    /**
+     * message dto constructor
+     *
+     * @param topicId this message topic id
+     * @param title   message title
+     * @param body    message text
+     */
     public TopicMessageDto(int topicId, String title, String body) {
         this(0, topicId, title, body);
     }
 
+    /**
+     * message dto constructor
+     *
+     * @param id      message id in database
+     * @param topicId this message topic id
+     * @param title   message title
+     * @param body    message text
+     */
     public TopicMessageDto(int id, int topicId, String title, String body) {
         this.id = id;
         this.topicId = topicId;
@@ -25,6 +57,12 @@ public class TopicMessageDto {
         this.body = body;
     }
 
+    /**
+     * method for mapping class TopicMessage to dto
+     *
+     * @param topicMessage message for mapping
+     * @return dto message
+     */
     public static TopicMessageDto toDTO(TopicMessage topicMessage) {
         return new TopicMessageDto(topicMessage.getId(), topicMessage.getTopic().getId(),
                 topicMessage.getTitle(), topicMessage.getBody());

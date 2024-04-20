@@ -4,20 +4,56 @@ import crud_app.entity.Topic;
 import crud_app.repository.TopicRepository;
 import crud_app.utils.DataBase;
 import crud_app.utils.TopicMapper;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 
+/**
+ * this is implementation topic repository interface
+ */
 public class TopicRepositoryImpl implements TopicRepository {
+    /**
+     * sql query for save topic
+     */
+    private final String createQuery = """
+            INSERT INTO topics (name) VALUES (?)
+            """;
+    /**
+     * sql query for read topic
+     */
+    private final String readQuery = """
+            SELECT * FROM topics 
+            WHERE id = ?
+            """;
+    /**
+     * sql query for update topic
+     */
+    private final String updateQuery = """
+            UPDATE topics SET name = ? 
+            WHERE id = ?
+            """;
+    /**
+     * sql query for remove topic
+     */
+    private final String removeQuery = """
+            DELETE FROM topics 
+            WHERE id = ?
+            """;
+    /**
+     * sql query for get all topics
+     */
+    private final String getAllTopicQuery = """
+            SELECT * FROM topics
+            """;
 
-    private final String createQuery = "INSERT INTO topics (name) VALUES (?)";
-    private final String readQuery = "SELECT * FROM topics WHERE id = ?";
-    private final String updateQuery = "UPDATE topics SET name = ? WHERE id = ?";
-    private final String removeQuery = "DELETE FROM topics WHERE id = ?";
-    private final String getAllTopicQuery = "SELECT * FROM topics";
-
+    /**
+     * method save new topic in database
+     *
+     * @param topic topic for save
+     * @return saved topic
+     */
     @Override
     public Topic createTopic(Topic topic) {
         if (topic.getId() != 0) throw new IllegalStateException("new topic id must be 0");
@@ -35,6 +71,12 @@ public class TopicRepositoryImpl implements TopicRepository {
         return topic;
     }
 
+    /**
+     * method update topic in database
+     *
+     * @param topic topic for update
+     * @return updated topic
+     */
     @Override
     public Topic updateTopic(Topic topic) {
         if (topic.getId() == 0) throw new IllegalStateException("topic id not must be 0");
@@ -49,6 +91,12 @@ public class TopicRepositoryImpl implements TopicRepository {
         return topic;
     }
 
+    /**
+     * method read topic from database by id
+     *
+     * @param topicId topic id in database
+     * @return topic
+     */
     @Override
     public Topic getTopic(int topicId) {
         try (PreparedStatement preparedStatement = DataBase.getConnection().prepareStatement(readQuery)) {
@@ -61,6 +109,12 @@ public class TopicRepositoryImpl implements TopicRepository {
         }
     }
 
+    /**
+     * method remove topic from database
+     *
+     * @param topicId topic id in database
+     * @return removed topic
+     */
     @Override
     public boolean removeTopic(int topicId) {
         try (PreparedStatement preparedStatement = DataBase.getConnection().prepareStatement(removeQuery)) {
@@ -73,6 +127,11 @@ public class TopicRepositoryImpl implements TopicRepository {
         return true;
     }
 
+    /**
+     * method return list all topics from database
+     *
+     * @return list topics
+     */
     @Override
     public List<Topic> getAllTopic() {
         List<Topic> topicList = new ArrayList<>();

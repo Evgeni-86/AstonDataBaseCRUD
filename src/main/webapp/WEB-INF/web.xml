@@ -5,23 +5,27 @@
          version="4.0">
 
 
-<display-name>crud_app</display-name>
+    <display-name>crud_app</display-name>
 
-<servlet>
-    <servlet-name>TopicServlet</servlet-name>
-    <servlet-class>crud_app.web.servlet.TopicServlet</servlet-class>
-</servlet>
-<servlet-mapping>
-    <servlet-name>TopicServlet</servlet-name>
-    <url-pattern>/topics/*</url-pattern>
-</servlet-mapping>
-<servlet>
-    <servlet-name>TopicMessageServlet</servlet-name>
-    <servlet-class>crud_app.web.servlet.TopicMessageServlet</servlet-class>
-</servlet>
-<servlet-mapping>
-    <servlet-name>TopicMessageServlet</servlet-name>
-    <url-pattern>/messages/*</url-pattern>
-</servlet-mapping>
+    <listener>
+        <listener-class>crud_app.utils.MyServletContextListener</listener-class>
+    </listener>
+
+    <servlet>
+        <servlet-name>TopicServlet</servlet-name>
+        <servlet-class>crud_app.web.servlet.TopicServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>TopicServlet</servlet-name>
+        <url-pattern>/topics/*</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>TopicMessageServlet</servlet-name>
+        <servlet-class>crud_app.web.servlet.TopicMessageServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>TopicMessageServlet</servlet-name>
+        <url-pattern>/messages/*</url-pattern>
+    </servlet-mapping>
 
 </web-app>

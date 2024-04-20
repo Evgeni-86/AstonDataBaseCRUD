@@ -2,18 +2,41 @@ package crud_app.entity;
 
 import java.util.Objects;
 
+/**
+ * topic entity class
+ */
 public class Topic {
+    /**
+     * topic id in database
+     */
     private int id;
+    /**
+     * topic name
+     */
     private String name;
 
+    /**
+     * topic no args constructor
+     */
     public Topic() {
     }
 
+    /**
+     * topic constructor
+     *
+     * @param id   topic id in database
+     * @param name topic name
+     */
     public Topic(int id, String name) {
         this.id = id;
         this.name = name;
     }
 
+    /**
+     * topic constructor
+     *
+     * @param name topic name
+     */
     public Topic(String name) {
         this(0, name);
     }

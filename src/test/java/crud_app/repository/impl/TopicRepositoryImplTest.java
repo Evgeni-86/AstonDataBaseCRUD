@@ -1,5 +1,6 @@
 package crud_app.repository.impl;
 
+import crud_app.AbstractTest;
 import crud_app.entity.Topic;
 import crud_app.entity.TopicMessage;
 import crud_app.utils.DataBase;
@@ -20,7 +21,7 @@ class TopicRepositoryImplTest extends AbstractTest {
     @DisplayName("create new topic")
     void createTopic() {
         //Arrange
-        Topic newTopic = new Topic("New Topic createTopic");
+        Topic newTopic = new Topic("createTopic");
         //Act
         Topic actual = SUT.createTopic(newTopic);
         //Assert
@@ -33,11 +34,11 @@ class TopicRepositoryImplTest extends AbstractTest {
     @DisplayName("update topic")
     void updateTopic() {
         //Arrange
-        Topic newTopic = new Topic("New Topic updateTopic");
+        Topic newTopic = new Topic("updateTopic");
         SUT.createTopic(newTopic);
         Topic topicFromDB = SUT.getTopic(newTopic.getId());
         //Act
-        topicFromDB.setName("New Topic 3 Update");
+        topicFromDB.setName("updateTopic Update");
         SUT.updateTopic(topicFromDB);
         //Assert
         Assertions.assertEquals(topicFromDB, SUT.getTopic(topicFromDB.getId()));
@@ -47,7 +48,7 @@ class TopicRepositoryImplTest extends AbstractTest {
     @DisplayName("get topic by id")
     void getTopic() {
         //Arrange
-        Topic newTopic = new Topic("New Topic getTopic");
+        Topic newTopic = new Topic("getTopic");
         SUT.createTopic(newTopic);
         //Act
         Topic actual = SUT.getTopic(newTopic.getId());
@@ -59,7 +60,7 @@ class TopicRepositoryImplTest extends AbstractTest {
     @DisplayName("remove topic by id")
     void removeTopic() {
         //Arrange
-        Topic newTopic = new Topic("New Topic removeTopic");
+        Topic newTopic = new Topic("removeTopic");
         SUT.createTopic(newTopic);
         TopicMessage message = new TopicMessage("Title 1", "Message 1", newTopic);
         messageRepository.createMessage(message);
@@ -84,9 +85,9 @@ class TopicRepositoryImplTest extends AbstractTest {
             throw new RuntimeException(e);
         }
         List<Topic> expected = new ArrayList<>() {{
-            add(new Topic("Topic1"));
-            add(new Topic("Topic2"));
-            add(new Topic("Topic3"));
+            add(new Topic("getAllTopic Topic1"));
+            add(new Topic("getAllTopic Topic2"));
+            add(new Topic("getAllTopic Topic3"));
         }};
         expected.forEach(topic -> SUT.createTopic(topic));
         //Act

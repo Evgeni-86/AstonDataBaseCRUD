@@ -1,25 +1,39 @@
 package crud_app.utils;
 
-import jakarta.servlet.ServletContext;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
+/**
+ * this class create connection and init database
+ */
 public class DataBase {
 
+    /**
+     * properties for connection to database
+     */
     private static Properties properties;
+    /**
+     * connection to database
+     */
     private static Connection connection;
 
+    /**
+     * constructor for set properties
+     *
+     * @param properties database properties
+     */
     public static void setProperties(Properties properties) {
         DataBase.properties = properties;
     }
 
+    /**
+     * method create and return connection for database
+     *
+     * @return database connection
+     */
     public static Connection getConnection() {
         if (connection != null) return connection;
         try {
@@ -35,6 +49,9 @@ public class DataBase {
         return connection;
     }
 
+    /**
+     * method initialisation database
+     */
     public static void initDataBase() {
         Connection connectionDB = DataBase.getConnection();
         try (Statement statement = connectionDB.createStatement()) {
@@ -43,7 +60,7 @@ public class DataBase {
             statement.addBatch("""
                     CREATE TABLE topics (
                     id   SERIAL PRIMARY KEY,
-                    name VARCHAR(50),
+                    name VARCHAR(50) NOT NULL,
                     CONSTRAINT topic_name_unique UNIQUE (name))
                     """);
             statement.addBatch("""

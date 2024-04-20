@@ -44,14 +44,12 @@
             <artifactId>postgresql</artifactId>
             <version>42.7.3</version>
         </dependency>
-
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <version>5.10.2</version>
             <scope>test</scope>
         </dependency>
-
         <!--Web-->
         <dependency>
             <groupId>jakarta.servlet</groupId>
@@ -59,13 +57,11 @@
             <version>6.0.0</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.17.0</version>
         </dependency>
-
         <!--TEST CONTAINERS-->
         <dependency>
             <groupId>org.testcontainers</groupId>
@@ -84,7 +80,6 @@
             <version>5.7.0</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <dependencyManagement>
@@ -98,5 +93,4 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
 </project>

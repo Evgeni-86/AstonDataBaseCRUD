@@ -2,13 +2,35 @@ package crud_app.entity;
 
 import java.util.Objects;
 
-
+/**
+ * message entity class
+ */
 public class TopicMessage {
+    /**
+     * message id in database
+     */
     private int id;
+    /**
+     * message title
+     */
     private String title;
+    /**
+     * message text
+     */
     private String body;
+    /**
+     * this message topic
+     */
     private Topic topic;
 
+    /**
+     * message constructor
+     *
+     * @param id    message id in database
+     * @param title message title
+     * @param body  message text
+     * @param topic this message topic
+     */
     public TopicMessage(int id, String title, String body, Topic topic) {
         this.id = id;
         this.title = title;
@@ -16,12 +38,26 @@ public class TopicMessage {
         this.topic = topic;
     }
 
+    /**
+     * message constructor
+     *
+     * @param id    message id in database
+     * @param title message title
+     * @param body  message text
+     */
     public TopicMessage(int id, String title, String body) {
         this.id = id;
         this.title = title;
         this.body = body;
     }
 
+    /**
+     * message constructor
+     *
+     * @param title message title
+     * @param body  message text
+     * @param topic this message topic
+     */
     public TopicMessage(String title, String body, Topic topic) {
         this(0, title, body, topic);
     }

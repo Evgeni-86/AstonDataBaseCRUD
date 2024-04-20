@@ -1,4 +1,4 @@
-package crud_app.repository.impl;
+package crud_app;
 
 
 import crud_app.utils.DataBase;
@@ -8,8 +8,7 @@ import java.util.Properties;
 
 public abstract class AbstractTest {
 
-    private static PostgreSQLContainer<?> postgresDBContainer = new PostgreSQLContainer<>("postgres:15")
-            .withInitScript("init.sql");
+    private static PostgreSQLContainer<?> postgresDBContainer = new PostgreSQLContainer<>("postgres:15");
 
     static {
         postgresDBContainer.start();
@@ -19,5 +18,6 @@ public abstract class AbstractTest {
         properties.put("database.username", postgresDBContainer.getUsername());
         properties.put("database.password", postgresDBContainer.getPassword());
         DataBase.setProperties(properties);
+        DataBase.initDataBase();
     }
 }

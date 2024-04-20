@@ -1,5 +1,6 @@
 package crud_app.repository.impl;
 
+import crud_app.AbstractTest;
 import crud_app.entity.Topic;
 import crud_app.entity.TopicMessage;
 import org.junit.jupiter.api.*;
