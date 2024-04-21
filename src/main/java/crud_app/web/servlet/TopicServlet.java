@@ -34,6 +34,7 @@ public class TopicServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
 
         String pathInfo = request.getPathInfo();
         if (pathInfo == null || pathInfo.equals("/")) {
@@ -62,6 +63,7 @@ public class TopicServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String pathInfo = request.getPathInfo();
+        response.setCharacterEncoding("UTF-8");
 
         if (pathInfo == null || pathInfo.equals("/")) {
             TopicDto topic = objectMapper.readValue(JsonParser.parseJson(request), TopicDto.class);
@@ -82,6 +84,7 @@ public class TopicServlet extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String pathInfo = request.getPathInfo();
+        response.setCharacterEncoding("UTF-8");
 
         if (pathInfo == null || pathInfo.equals("/")) {
             TopicDto topic = objectMapper.readValue(JsonParser.parseJson(request), TopicDto.class);
@@ -102,6 +105,8 @@ public class TopicServlet extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String pathInfo = request.getPathInfo();
+        response.setCharacterEncoding("UTF-8");
+
         if (pathInfo == null || pathInfo.equals("/")) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
