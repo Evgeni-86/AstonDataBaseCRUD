@@ -36,7 +36,7 @@ public class MessageRepositoryImpl implements MessageRepository {
      */
     private final String updateQuery = """
             UPDATE topic_messages 
-            SET title = ?, body = ? 
+            SET topic_id = ?, title = ?, body = ? 
             WHERE id = ?
             """;
     /**
@@ -92,9 +92,10 @@ public class MessageRepositoryImpl implements MessageRepository {
         if (topicMessage.getId() == 0) throw new IllegalStateException("topic message id not must be 0");
         if (topicMessage.getTopic().getId() == 0) throw new IllegalStateException("topic id not must be 0");
         try (PreparedStatement preparedStatement = DataBase.getConnection().prepareStatement(updateQuery)) {
-            preparedStatement.setString(1, topicMessage.getTitle());
-            preparedStatement.setString(2, topicMessage.getBody());
-            preparedStatement.setInt(3, topicMessage.getId());
+            preparedStatement.setInt(1, topicMessage.getTopic().getId());
+            preparedStatement.setString(2, topicMessage.getTitle());
+            preparedStatement.setString(3, topicMessage.getBody());
+            preparedStatement.setInt(4, topicMessage.getId());
             int insertRow = preparedStatement.executeUpdate();
             if (insertRow == 0) throw new RuntimeException("topic message not update");
         } catch (SQLException e) {

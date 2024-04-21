@@ -13,7 +13,6 @@ import java.util.List;
  * this is implementation topic service interface
  */
 public class TopicServiceImpl implements TopicService {
-
     /**
      * topic repository interface
      */

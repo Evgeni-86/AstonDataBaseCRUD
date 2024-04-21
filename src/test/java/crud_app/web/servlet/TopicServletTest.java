@@ -11,7 +11,9 @@ import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 class TopicServletTest extends AbstractTest {
@@ -76,7 +78,8 @@ class TopicServletTest extends AbstractTest {
         StringWriter stringWriter = new StringWriter();
         Mockito.when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
 
-        StringReader stringReader = new StringReader("{\"id\":0,\"name\":\"topic doPost\"}");
+//        StringReader stringReader = new StringReader("{\"id\":0,\"name\":\"topic doPost\"}");
+        StringReader stringReader = new StringReader("{\"name\":\"topic doPost\"}");
         BufferedReader bufferedReader = new BufferedReader(stringReader);
         Mockito.when(request.getReader()).thenReturn(bufferedReader);
         //Act

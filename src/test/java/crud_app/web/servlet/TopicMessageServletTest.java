@@ -93,7 +93,7 @@ class TopicMessageServletTest extends AbstractTest {
         Mockito.when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
 
         StringReader stringReader = new StringReader(
-                String.format("{\"id\":0,\"topicId\":%d,\"title\":\"New Title doPost\",\"body\":\"New doPost\"}",
+                String.format("{\"topicId\":%d,\"title\":\"New Title doPost\",\"body\":\"New doPost\"}",
                         topicDto.getId()));
         BufferedReader bufferedReader = new BufferedReader(stringReader);
         Mockito.when(request.getReader()).thenReturn(bufferedReader);
