@@ -1,11 +1,11 @@
 package crud_app.service.impl;
 
 import crud_app.dto.TopicMessageDto;
-import crud_app.entity.Topic;
 import crud_app.entity.TopicMessage;
 import crud_app.repository.MessageRepository;
 import crud_app.repository.impl.MessageRepositoryImpl;
 import crud_app.service.TopicMessageService;
+import crud_app.utils.TopicMessageFactory;
 
 import java.util.Comparator;
 import java.util.List;
@@ -18,44 +18,36 @@ public class TopicMessageServiceImpl implements TopicMessageService {
      * topic message repository interface
      */
     private MessageRepository messageRepository = new MessageRepositoryImpl();
+    /**
+     * topic message factory
+     */
+    private TopicMessageFactory topicMessageFactory = new TopicMessageFactory();
 
     /**
      * method save topic message
      *
-     * @param topicMessage topic message dto
+     * @param topicMessageDto topic message dto
      * @return saved topic message dto
      */
     @Override
-    public TopicMessageDto create(TopicMessageDto topicMessage) {
-        Topic topic = new Topic();
-        topic.setId(topicMessage.getTopicId());
-        TopicMessage message = new TopicMessage(
-                topicMessage.getId(),
-                topicMessage.getTitle(),
-                topicMessage.getBody(),
-                topic);
-        TopicMessage result = messageRepository.createMessage(message);
-        topicMessage.setId(result.getId());
-        return topicMessage;
+    public TopicMessageDto create(TopicMessageDto topicMessageDto) {
+        TopicMessage message = topicMessageFactory.getTopicMessage(topicMessageDto);
+        messageRepository.createMessage(message);
+        topicMessageDto.setId(message.getId());
+        return topicMessageDto;
     }
 
     /**
      * method update topic message
      *
-     * @param topicMessage topic message dto
+     * @param topicMessageDto topic message dto
      * @return updated topic message dto
      */
     @Override
-    public TopicMessageDto update(TopicMessageDto topicMessage) {
-        Topic topic = new Topic();
-        topic.setId(topicMessage.getTopicId());
-        TopicMessage message = new TopicMessage(
-                topicMessage.getId(),
-                topicMessage.getTitle(),
-                topicMessage.getBody(),
-                topic);
+    public TopicMessageDto update(TopicMessageDto topicMessageDto) {
+        TopicMessage message = topicMessageFactory.getTopicMessage(topicMessageDto);
         messageRepository.updateMessage(message);
-        return topicMessage;
+        return topicMessageDto;
     }
 
     /**
