@@ -5,6 +5,7 @@ import crud_app.dto.TopicDto;
 import crud_app.service.TopicService;
 import crud_app.service.impl.TopicServiceImpl;
 import crud_app.utils.JsonParser;
+import crud_app.utils.RequestValidation;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -36,21 +37,15 @@ public class TopicServlet extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        String pathInfo = request.getPathInfo();
-        if (pathInfo == null || pathInfo.equals("/")) {
+        int validationResult = RequestValidation.validate(request);
+        if (validationResult > 0) {
+            TopicDto topic = topicService.get(validationResult);
+            response.getWriter().write(objectMapper.writeValueAsString(topic));
+        } else if (validationResult == 0) {
             response.getWriter().write(objectMapper.writeValueAsString(topicService.getAll()));
-            return;
-        }
-
-        String[] splits = pathInfo.split("/");
-        if (splits.length != 2 || !splits[1].matches("-?\\d+")) {
+        } else {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            return;
         }
-
-        String topicId = splits[1];
-        TopicDto topic = topicService.get(Integer.parseInt(topicId));
-        response.getWriter().write(objectMapper.writeValueAsString(topic));
     }
 
     /**
@@ -62,10 +57,10 @@ public class TopicServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String pathInfo = request.getPathInfo();
         response.setCharacterEncoding("UTF-8");
 
-        if (pathInfo == null || pathInfo.equals("/")) {
+        int validationResult = RequestValidation.validate(request);
+        if (validationResult == 0) {
             TopicDto topic = objectMapper.readValue(JsonParser.parseJson(request), TopicDto.class);
             TopicDto result = topicService.create(topic);
             response.getWriter().write(String.format("new topic save id = %d", result.getId()));
@@ -83,10 +78,10 @@ public class TopicServlet extends HttpServlet {
      */
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String pathInfo = request.getPathInfo();
         response.setCharacterEncoding("UTF-8");
 
-        if (pathInfo == null || pathInfo.equals("/")) {
+        int validationResult = RequestValidation.validate(request);
+        if (validationResult == 0) {
             TopicDto topic = objectMapper.readValue(JsonParser.parseJson(request), TopicDto.class);
             topicService.update(topic);
             response.getWriter().write(String.format("topic update id = %d", topic.getId()));
@@ -104,20 +99,12 @@ public class TopicServlet extends HttpServlet {
      */
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String pathInfo = request.getPathInfo();
         response.setCharacterEncoding("UTF-8");
 
-        if (pathInfo == null || pathInfo.equals("/")) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            return;
-        }
-
-        String[] splits = pathInfo.split("/");
-
-        if (splits.length == 2 || splits[1].matches("-?\\d+")) {
-            int topicId = Integer.parseInt(splits[1]);
-            topicService.remove(topicId);
-            response.getWriter().write(String.format("topic by id = %d removed", topicId));
+        int validationResult = RequestValidation.validate(request);
+        if (validationResult > 0) {
+            topicService.remove(validationResult);
+            response.getWriter().write(String.format("topic by id = %d removed", validationResult));
         } else {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }

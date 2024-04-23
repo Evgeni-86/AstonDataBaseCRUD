@@ -21,7 +21,7 @@ public class DataBase {
     private static Connection connection;
 
     /**
-     * constructor for set properties
+     * method for set properties
      *
      * @param properties database properties
      */
