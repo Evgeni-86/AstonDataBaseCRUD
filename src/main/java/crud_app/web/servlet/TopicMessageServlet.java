@@ -5,12 +5,14 @@ import crud_app.dto.TopicMessageDto;
 import crud_app.service.TopicMessageService;
 import crud_app.service.impl.TopicMessageServiceImpl;
 import crud_app.utils.JsonParser;
+import crud_app.utils.RequestValidation;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * topic message servlet
@@ -37,24 +39,15 @@ public class TopicMessageServlet extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        String pathInfo = request.getPathInfo();
-        if (pathInfo == null || pathInfo.equals("/")) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            return;
-        }
-
-        String[] splits = pathInfo.split("/");
-
-        if (splits.length == 3 && splits[2].matches("-?\\d+")) {
-            int topicId = Integer.parseInt(splits[2]);
-            List<TopicMessageDto> allMessage = topicMessageService.getAllMessage(topicId);
-            response.getWriter().write(objectMapper.writeValueAsString(allMessage));
-
-        } else if (splits.length == 2 && splits[1].matches("-?\\d+")) {
-            int messageId = Integer.parseInt(splits[1]);
+        Map<String, Integer> validationResult = RequestValidation.validate(request);
+        if (validationResult.containsKey("/id")) {
+            int messageId = validationResult.get("/id");
             TopicMessageDto messageDto = topicMessageService.get(messageId);
             response.getWriter().write(objectMapper.writeValueAsString(messageDto));
-
+        } else if (validationResult.containsKey("/topic/id")) {
+            int topicId = validationResult.get("/topic/id");
+            List<TopicMessageDto> allMessage = topicMessageService.getAllMessage(topicId);
+            response.getWriter().write(objectMapper.writeValueAsString(allMessage));
         } else {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
@@ -69,10 +62,10 @@ public class TopicMessageServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String pathInfo = request.getPathInfo();
         response.setCharacterEncoding("UTF-8");
 
-        if (pathInfo == null || pathInfo.equals("/")) {
+        Map<String, Integer> validationResult = RequestValidation.validate(request);
+        if (validationResult.containsKey("/")) {
             TopicMessageDto messageDto = objectMapper.readValue(JsonParser.parseJson(request), TopicMessageDto.class);
             TopicMessageDto result = topicMessageService.create(messageDto);
             response.getWriter().write(String.format("new message save id = %d", result.getId()));
@@ -90,10 +83,10 @@ public class TopicMessageServlet extends HttpServlet {
      */
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String pathInfo = request.getPathInfo();
         response.setCharacterEncoding("UTF-8");
 
-        if (pathInfo == null || pathInfo.equals("/")) {
+        Map<String, Integer> validationResult = RequestValidation.validate(request);
+        if (validationResult.containsKey("/")) {
             TopicMessageDto messageDto = objectMapper.readValue(JsonParser.parseJson(request), TopicMessageDto.class);
             topicMessageService.update(messageDto);
             response.getWriter().write(String.format("message update id = %d", messageDto.getId()));
@@ -111,22 +104,15 @@ public class TopicMessageServlet extends HttpServlet {
      */
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String pathInfo = request.getPathInfo();
         response.setCharacterEncoding("UTF-8");
 
-        if (pathInfo == null || pathInfo.equals("/")) {
+        Map<String, Integer> validationResult = RequestValidation.validate(request);
+        if (validationResult.containsKey("/id")) {
+            int messageId = validationResult.get("/id");
+            topicMessageService.remove(messageId);
+            response.getWriter().write(String.format("message by id = %d removed", messageId));
+        } else {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            return;
         }
-
-        String[] splits = pathInfo.split("/");
-        if (splits.length != 2 || !splits[1].matches("-?\\d+")) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            return;
-        }
-
-        int messageId = Integer.parseInt(splits[1]);
-        topicMessageService.remove(messageId);
-        response.getWriter().write(String.format("message by id = %d removed", messageId));
     }
 }

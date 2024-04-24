@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * topic servlet
@@ -37,11 +38,11 @@ public class TopicServlet extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        int validationResult = RequestValidation.validate(request);
-        if (validationResult > 0) {
-            TopicDto topic = topicService.get(validationResult);
+        Map<String, Integer> validationResult = RequestValidation.validate(request);
+        if (validationResult.containsKey("/id")) {
+            TopicDto topic = topicService.get(validationResult.get("/id"));
             response.getWriter().write(objectMapper.writeValueAsString(topic));
-        } else if (validationResult == 0) {
+        } else if (validationResult.containsKey("/")) {
             response.getWriter().write(objectMapper.writeValueAsString(topicService.getAll()));
         } else {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
@@ -59,8 +60,8 @@ public class TopicServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setCharacterEncoding("UTF-8");
 
-        int validationResult = RequestValidation.validate(request);
-        if (validationResult == 0) {
+        Map<String, Integer> validationResult = RequestValidation.validate(request);
+        if (validationResult.containsKey("/")) {
             TopicDto topic = objectMapper.readValue(JsonParser.parseJson(request), TopicDto.class);
             TopicDto result = topicService.create(topic);
             response.getWriter().write(String.format("new topic save id = %d", result.getId()));
@@ -80,8 +81,8 @@ public class TopicServlet extends HttpServlet {
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setCharacterEncoding("UTF-8");
 
-        int validationResult = RequestValidation.validate(request);
-        if (validationResult == 0) {
+        Map<String, Integer> validationResult = RequestValidation.validate(request);
+        if (validationResult.containsKey("/")) {
             TopicDto topic = objectMapper.readValue(JsonParser.parseJson(request), TopicDto.class);
             topicService.update(topic);
             response.getWriter().write(String.format("topic update id = %d", topic.getId()));
@@ -101,10 +102,11 @@ public class TopicServlet extends HttpServlet {
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setCharacterEncoding("UTF-8");
 
-        int validationResult = RequestValidation.validate(request);
-        if (validationResult > 0) {
-            topicService.remove(validationResult);
-            response.getWriter().write(String.format("topic by id = %d removed", validationResult));
+        Map<String, Integer> validationResult = RequestValidation.validate(request);
+        if (validationResult.containsKey("/id")) {
+            int id = validationResult.get("/id");
+            topicService.remove(id);
+            response.getWriter().write(String.format("topic by id = %d removed", id));
         } else {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
