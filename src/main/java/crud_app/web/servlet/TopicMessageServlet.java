@@ -40,13 +40,12 @@ public class TopicMessageServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         Map<String, Integer> validationResult = RequestValidation.validate(request);
-        if (validationResult.containsKey("/id")) {
-            int messageId = validationResult.get("/id");
-            TopicMessageDto messageDto = topicMessageService.get(messageId);
+        Integer id;
+        if ((id = validationResult.get("/id")) != null) {
+            TopicMessageDto messageDto = topicMessageService.get(id);
             response.getWriter().write(objectMapper.writeValueAsString(messageDto));
-        } else if (validationResult.containsKey("/topic/id")) {
-            int topicId = validationResult.get("/topic/id");
-            List<TopicMessageDto> allMessage = topicMessageService.getAllMessage(topicId);
+        } else if ((id = validationResult.get("/topic/id")) != null) {
+            List<TopicMessageDto> allMessage = topicMessageService.getAllMessage(id);
             response.getWriter().write(objectMapper.writeValueAsString(allMessage));
         } else {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
@@ -107,10 +106,10 @@ public class TopicMessageServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         Map<String, Integer> validationResult = RequestValidation.validate(request);
-        if (validationResult.containsKey("/id")) {
-            int messageId = validationResult.get("/id");
-            topicMessageService.remove(messageId);
-            response.getWriter().write(String.format("message by id = %d removed", messageId));
+        Integer id;
+        if ((id = validationResult.get("/id")) != null) {
+            topicMessageService.remove(id);
+            response.getWriter().write(String.format("message by id = %d removed", id));
         } else {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }

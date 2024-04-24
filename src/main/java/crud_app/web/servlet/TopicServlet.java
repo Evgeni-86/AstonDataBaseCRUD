@@ -39,8 +39,9 @@ public class TopicServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         Map<String, Integer> validationResult = RequestValidation.validate(request);
-        if (validationResult.containsKey("/id")) {
-            TopicDto topic = topicService.get(validationResult.get("/id"));
+        Integer id;
+        if ((id = validationResult.get("/id")) != null) {
+            TopicDto topic = topicService.get(id);
             response.getWriter().write(objectMapper.writeValueAsString(topic));
         } else if (validationResult.containsKey("/")) {
             response.getWriter().write(objectMapper.writeValueAsString(topicService.getAll()));
@@ -103,8 +104,8 @@ public class TopicServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         Map<String, Integer> validationResult = RequestValidation.validate(request);
-        if (validationResult.containsKey("/id")) {
-            int id = validationResult.get("/id");
+        Integer id;
+        if ((id = validationResult.get("/id")) != null) {
             topicService.remove(id);
             response.getWriter().write(String.format("topic by id = %d removed", id));
         } else {
