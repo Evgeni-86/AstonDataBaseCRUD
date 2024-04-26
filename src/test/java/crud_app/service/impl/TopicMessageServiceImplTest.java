@@ -107,6 +107,7 @@ class TopicMessageServiceImplTest {
     }
 
     @Test
+    @DisplayName("get all message by topic id")
     void getAllMessage() {
         //Arrange
         Topic topic = new Topic();

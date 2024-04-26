@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,7 +28,7 @@ public class TopicServlet extends HttpServlet {
     private ObjectMapper objectMapper = new ObjectMapper();
 
     /**
-     * method to process the rest get request
+     * method to process the rest get topic request
      *
      * @param request  request
      * @param response response
@@ -40,18 +41,22 @@ public class TopicServlet extends HttpServlet {
 
         Map<String, Integer> validationResult = RequestValidation.validate(request);
         Integer id;
-        if ((id = validationResult.get("/id")) != null) {
+        if (validationResult.containsKey("/")) {
+            List<TopicDto> allTopic = topicService.getAllTopic();
+            response.getWriter().write(objectMapper.writeValueAsString(allTopic));
+        } else if ((id = validationResult.get("/id")) != null) {
             TopicDto topic = topicService.get(id);
             response.getWriter().write(objectMapper.writeValueAsString(topic));
-        } else if (validationResult.containsKey("/")) {
-            response.getWriter().write(objectMapper.writeValueAsString(topicService.getAll()));
+        } else if ((id = validationResult.get("/group/id")) != null) {
+            List<TopicDto> allTopicGroup = topicService.getAllTopicGroup(id);
+            response.getWriter().write(objectMapper.writeValueAsString(allTopicGroup));
         } else {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
     }
 
     /**
-     * method to process the rest post request
+     * method to process the rest post topic request
      *
      * @param request  request
      * @param response response
@@ -72,7 +77,7 @@ public class TopicServlet extends HttpServlet {
     }
 
     /**
-     * method to process the rest put request
+     * method to process the rest put topic request
      *
      * @param request  request
      * @param response response
@@ -93,7 +98,7 @@ public class TopicServlet extends HttpServlet {
     }
 
     /**
-     * method to process the rest delete request
+     * method to process the rest delete topic request
      *
      * @param request  request
      * @param response response

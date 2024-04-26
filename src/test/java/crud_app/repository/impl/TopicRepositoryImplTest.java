@@ -1,8 +1,10 @@
 package crud_app.repository.impl;
 
 import crud_app.AbstractTest;
+import crud_app.entity.Group;
 import crud_app.entity.Topic;
 import crud_app.entity.TopicMessage;
+import crud_app.repository.GroupRepository;
 import crud_app.utils.DataBase;
 import org.junit.jupiter.api.*;
 
@@ -17,11 +19,20 @@ class TopicRepositoryImplTest extends AbstractTest {
     private TopicRepositoryImpl SUT = new TopicRepositoryImpl();
     private MessageRepositoryImpl messageRepository = new MessageRepositoryImpl();
 
+    private static GroupRepository groupRepository;
+    private static Group groupForTest;
+
+    @BeforeAll
+    static void init() {
+        groupRepository = new GroupRepositoryImpl();
+        groupForTest = groupRepository.createGroup(new Group("TopicRepositoryImplTest"));
+    }
+
     @Test
     @DisplayName("create new topic")
     void createTopic() {
         //Arrange
-        Topic newTopic = new Topic("createTopic");
+        Topic newTopic = new Topic("createTopic", groupForTest);
         //Act
         Topic actual = SUT.createTopic(newTopic);
         //Assert
@@ -34,7 +45,7 @@ class TopicRepositoryImplTest extends AbstractTest {
     @DisplayName("update topic")
     void updateTopic() {
         //Arrange
-        Topic newTopic = new Topic("updateTopic");
+        Topic newTopic = new Topic("updateTopic", groupForTest);
         SUT.createTopic(newTopic);
         Topic topicFromDB = SUT.getTopic(newTopic.getId());
         //Act
@@ -48,7 +59,7 @@ class TopicRepositoryImplTest extends AbstractTest {
     @DisplayName("get topic by id")
     void getTopic() {
         //Arrange
-        Topic newTopic = new Topic("getTopic");
+        Topic newTopic = new Topic("getTopic", groupForTest);
         SUT.createTopic(newTopic);
         //Act
         Topic actual = SUT.getTopic(newTopic.getId());
@@ -60,7 +71,7 @@ class TopicRepositoryImplTest extends AbstractTest {
     @DisplayName("remove topic by id")
     void removeTopic() {
         //Arrange
-        Topic newTopic = new Topic("removeTopic");
+        Topic newTopic = new Topic("removeTopic", groupForTest);
         SUT.createTopic(newTopic);
         TopicMessage message = new TopicMessage("Title 1", "Message 1", newTopic);
         messageRepository.createMessage(message);
@@ -75,8 +86,8 @@ class TopicRepositoryImplTest extends AbstractTest {
     }
 
     @Test
-    @DisplayName("get all topic")
-    void getAllTopic() {
+    @DisplayName("get all topics for group")
+    void getAllTopicForGroup() {
         //Arrange
         String query = "DELETE FROM topics";
         try (Statement preparedStatement = DataBase.getConnection().createStatement()) {
@@ -85,9 +96,28 @@ class TopicRepositoryImplTest extends AbstractTest {
             throw new RuntimeException(e);
         }
         List<Topic> expected = new ArrayList<>() {{
-            add(new Topic("getAllTopic Topic1"));
-            add(new Topic("getAllTopic Topic2"));
-            add(new Topic("getAllTopic Topic3"));
+            add(new Topic("getAllTopic Topic1", groupForTest));
+            add(new Topic("getAllTopic Topic2", groupForTest));
+            add(new Topic("getAllTopic Topic3", groupForTest));
+        }};
+        expected.forEach(topic -> SUT.createTopic(topic));
+        //Act
+        List<Topic> actual = SUT.getAllTopicGroup(groupForTest.getId());
+        //Assert
+        Assertions.assertIterableEquals(expected, actual);
+    }
+
+    @Test
+    @DisplayName("get all topic")
+    void getAllTopic() {
+        //Arrange
+        DataBase.initDataBase();
+        Group group = new Group("getAllTopic");
+        groupForTest = groupRepository.createGroup(group);
+        List<Topic> expected = new ArrayList<>() {{
+            add(new Topic("getAllGroup Group1", group));
+            add(new Topic("getAllGroup Group2", group));
+            add(new Topic("getAllGroup Group3", group));
         }};
         expected.forEach(topic -> SUT.createTopic(topic));
         //Act

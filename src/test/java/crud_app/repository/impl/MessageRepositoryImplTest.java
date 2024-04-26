@@ -1,8 +1,10 @@
 package crud_app.repository.impl;
 
 import crud_app.AbstractTest;
+import crud_app.entity.Group;
 import crud_app.entity.Topic;
 import crud_app.entity.TopicMessage;
+import crud_app.repository.GroupRepository;
 import org.junit.jupiter.api.*;
 
 import java.util.List;
@@ -13,11 +15,19 @@ class MessageRepositoryImplTest extends AbstractTest {
     private MessageRepositoryImpl SUT = new MessageRepositoryImpl();
     private TopicRepositoryImpl topicRepository = new TopicRepositoryImpl();
 
+    private static Group groupForTest;
+
+    @BeforeAll
+    static void init() {
+        GroupRepository groupRepository = new GroupRepositoryImpl();
+        groupForTest = groupRepository.createGroup(new Group("MessageRepositoryImplTest"));
+    }
+
     @Test
     @DisplayName("create new topic message")
     void createMessage() {
         //Arrange
-        Topic topic = new Topic("createMessage");
+        Topic topic = new Topic("createMessage", groupForTest);
         topicRepository.createTopic(topic);
         TopicMessage newTopicMessage = new TopicMessage("Title createMessage", "createMessage", topic);
         //Act
@@ -32,7 +42,7 @@ class MessageRepositoryImplTest extends AbstractTest {
     @DisplayName("update topic message")
     void updateMessage() {
         //Arrange
-        Topic topic = new Topic("updateMessage");
+        Topic topic = new Topic("updateMessage", groupForTest);
         topicRepository.createTopic(topic);
         TopicMessage newTopicMessage = new TopicMessage("Title updateMessage", "updateMessage", topic);
         SUT.createMessage(newTopicMessage);
@@ -49,7 +59,7 @@ class MessageRepositoryImplTest extends AbstractTest {
     @DisplayName("get topic message by id")
     void getMessage() {
         //Arrange
-        Topic topic = new Topic("getMessage");
+        Topic topic = new Topic("getMessage", groupForTest);
         topicRepository.createTopic(topic);
         TopicMessage newTopicMessage = new TopicMessage("Title getMessage", "getMessage", topic);
         SUT.createMessage(newTopicMessage);
@@ -63,7 +73,7 @@ class MessageRepositoryImplTest extends AbstractTest {
     @DisplayName("remove topic message by id")
     void removeMessage() {
         //Arrange
-        Topic topic = new Topic("removeMessage");
+        Topic topic = new Topic("removeMessage", groupForTest);
         topicRepository.createTopic(topic);
         TopicMessage newTopicMessage = new TopicMessage("Title removeMessage", "removeMessage", topic);
         SUT.createMessage(newTopicMessage);
@@ -80,7 +90,7 @@ class MessageRepositoryImplTest extends AbstractTest {
     @DisplayName("get all message topic by id")
     void getAllMessageTopic() {
         //Arrange
-        Topic topic = new Topic("getAllMessageTopic");
+        Topic topic = new Topic("getAllMessageTopic", groupForTest);
         topicRepository.createTopic(topic);
         TopicMessage newTopicMessage1 = new TopicMessage("Title getAllMessageTopic", "getAllMessageTopic", topic);
         TopicMessage newTopicMessage2 = new TopicMessage("Title getAllMessageTopic", "getAllMessageTopic", topic);

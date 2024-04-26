@@ -1,10 +1,15 @@
 package crud_app.service.impl;
 
+import crud_app.dto.GroupDto;
 import crud_app.dto.TopicDto;
+import crud_app.dto.TopicMessageDto;
 import crud_app.entity.Topic;
+import crud_app.entity.TopicMessage;
 import crud_app.repository.TopicRepository;
 import crud_app.repository.impl.TopicRepositoryImpl;
 import crud_app.service.TopicService;
+import crud_app.utils.TopicFactory;
+import crud_app.utils.TopicMessageFactory;
 
 import java.util.Comparator;
 import java.util.List;
@@ -17,32 +22,36 @@ public class TopicServiceImpl implements TopicService {
      * topic repository interface
      */
     private TopicRepository topicRepository = new TopicRepositoryImpl();
+    /**
+     * topic factory
+     */
+    private TopicFactory topicFactory = new TopicFactory();
 
     /**
      * method save topic
      *
-     * @param topic topic dto
+     * @param topicDto topic dto
      * @return saved topic dto
      */
     @Override
-    public TopicDto create(TopicDto topic) {
-        Topic newTopic = new Topic(topic.getId(), topic.getName());
+    public TopicDto create(TopicDto topicDto) {
+        Topic newTopic = topicFactory.getTopicMessage(topicDto);
         Topic result = topicRepository.createTopic(newTopic);
-        topic.setId(result.getId());
-        return topic;
+        topicDto.setId(result.getId());
+        return topicDto;
     }
 
     /**
      * method update topic
      *
-     * @param topic topic dto
+     * @param topicDto topic dto
      * @return updated topic dto
      */
     @Override
-    public TopicDto update(TopicDto topic) {
-        Topic updateTopic = new Topic(topic.getId(), topic.getName());
+    public TopicDto update(TopicDto topicDto) {
+        Topic updateTopic = topicFactory.getTopicMessage(topicDto);
         topicRepository.updateTopic(updateTopic);
-        return topic;
+        return topicDto;
     }
 
     /**
@@ -69,15 +78,27 @@ public class TopicServiceImpl implements TopicService {
     }
 
     /**
-     * method get all topic dto
+     * method return list topic dto by group id
+     *
+     * @param groupId group id in database
+     * @return list topic dto
+     */
+    @Override
+    public List<TopicDto> getAllTopicGroup(int groupId) {
+        return topicRepository.getAllTopicGroup(groupId).stream()
+                .map(TopicDto::toDTO)
+                .sorted(Comparator.comparingInt(TopicDto::getId)).toList();
+    }
+
+    /**
+     * method return list all topics dto
      *
      * @return list topic dto
      */
     @Override
-    public List<TopicDto> getAll() {
+    public List<TopicDto> getAllTopic() {
         return topicRepository.getAllTopic().stream()
-                .map(e -> TopicDto.toDTO(e))
-                .sorted(Comparator.comparingInt(TopicDto::getId))
-                .toList();
+                .map(TopicDto::toDTO)
+                .sorted(Comparator.comparingInt(TopicDto::getId)).toList();
     }
 }

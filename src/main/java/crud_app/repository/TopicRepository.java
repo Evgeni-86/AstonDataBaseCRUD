@@ -1,6 +1,7 @@
 package crud_app.repository;
 
 import crud_app.entity.Topic;
+import crud_app.entity.TopicMessage;
 
 import java.util.List;
 
@@ -41,7 +42,15 @@ public interface TopicRepository {
     boolean removeTopic(int topicId);
 
     /**
-     * method return all topics from database
+     * method return list topic by group id
+     *
+     * @param groupId group id in database
+     * @return topic list
+     */
+    List<Topic> getAllTopicGroup(int groupId);
+
+    /**
+     * method return all topics
      *
      * @return topic list
      */

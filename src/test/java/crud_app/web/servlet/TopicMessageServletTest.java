@@ -3,16 +3,16 @@ package crud_app.web.servlet;
 import crud_app.dto.TopicDto;
 import crud_app.dto.TopicMessageDto;
 import crud_app.AbstractTest;
+import crud_app.entity.Group;
+import crud_app.repository.GroupRepository;
+import crud_app.repository.impl.GroupRepositoryImpl;
 import crud_app.service.TopicMessageService;
 import crud_app.service.TopicService;
 import crud_app.service.impl.TopicMessageServiceImpl;
 import crud_app.service.impl.TopicServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 
 import java.io.*;
@@ -29,6 +29,15 @@ class TopicMessageServletTest extends AbstractTest {
     private TopicMessageService topicMessageService = new TopicMessageServiceImpl();
     private TopicService topicService = new TopicServiceImpl();
 
+    private static GroupRepository groupRepository;
+    private static Group groupForTest;
+
+    @BeforeAll
+    static void init() {
+        groupRepository = new GroupRepositoryImpl();
+        groupForTest = groupRepository.createGroup(new Group("TopicMessageServletTest"));
+    }
+
     @BeforeEach
     public void setUp() {
         SUT = new TopicMessageServlet();
@@ -40,7 +49,7 @@ class TopicMessageServletTest extends AbstractTest {
     @DisplayName("get all message by topic id")
     void doGet1() throws IOException {
         //Arrange
-        TopicDto topicDto = new TopicDto("message doGet1");
+        TopicDto topicDto = new TopicDto("message doGet1", groupForTest.getId());
         topicService.create(topicDto);
         TopicMessageDto messageDto1 = new TopicMessageDto(topicDto.getId(), "New Title 1", "New 1");
         TopicMessageDto messageDto2 = new TopicMessageDto(topicDto.getId(), "New Title 2", "New 2");
@@ -64,7 +73,7 @@ class TopicMessageServletTest extends AbstractTest {
     @DisplayName("get message by id")
     void doGet2() throws IOException {
         //Arrange
-        TopicDto topicDto = new TopicDto("message doGet2");
+        TopicDto topicDto = new TopicDto("message doGet2", groupForTest.getId());
         topicService.create(topicDto);
         TopicMessageDto messageDto = new TopicMessageDto(topicDto.getId(), "New Title 1", "New 1");
         topicMessageService.create(messageDto);
@@ -85,7 +94,7 @@ class TopicMessageServletTest extends AbstractTest {
     @DisplayName("save new message")
     void doPost() throws IOException {
         //Arrange
-        TopicDto topicDto = new TopicDto("message doPost");
+        TopicDto topicDto = new TopicDto("message doPost", groupForTest.getId());
         topicService.create(topicDto);
 
         Mockito.when(request.getPathInfo()).thenReturn("/");
@@ -115,7 +124,7 @@ class TopicMessageServletTest extends AbstractTest {
     @DisplayName("update message")
     void doPut() throws IOException {
         //Arrange
-        TopicDto topicDto = new TopicDto("message doPut");
+        TopicDto topicDto = new TopicDto("message doPut", groupForTest.getId());
         topicService.create(topicDto);
         TopicMessageDto messageDto = new TopicMessageDto(topicDto.getId(), "New Title doPut", "doPut");
         topicMessageService.create(messageDto);
@@ -142,7 +151,7 @@ class TopicMessageServletTest extends AbstractTest {
     @DisplayName("delete message by id")
     void doDelete() throws IOException {
         //Arrange
-        TopicDto topicDto = new TopicDto("message doDelete");
+        TopicDto topicDto = new TopicDto("message doDelete", groupForTest.getId());
         topicService.create(topicDto);
         TopicMessageDto messageDto = new TopicMessageDto(topicDto.getId(), "New Title doDelete", "doDelete");
         topicMessageService.create(messageDto);

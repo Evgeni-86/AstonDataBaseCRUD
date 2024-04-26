@@ -14,11 +14,28 @@ public class Topic {
      * topic name
      */
     private String name;
+    /**
+     * this topic group
+     */
+    private Group group;
 
     /**
      * topic no args constructor
      */
     public Topic() {
+    }
+
+    /**
+     * topic constructor
+     *
+     * @param id    topic id in database
+     * @param name  topic name
+     * @param group topic group
+     */
+    public Topic(int id, String name, Group group) {
+        this.id = id;
+        this.name = name;
+        this.group = group;
     }
 
     /**
@@ -30,6 +47,17 @@ public class Topic {
     public Topic(int id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    /**
+     * topic constructor
+     *
+     * @param name topic name
+     * @param group topic group
+     */
+    public Topic(String name, Group group) {
+        this.name = name;
+        this.group = group;
     }
 
     /**
@@ -57,17 +85,25 @@ public class Topic {
         this.name = name;
     }
 
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Topic topic = (Topic) o;
-        return id == topic.id && Objects.equals(name, topic.name);
+        return id == topic.id && Objects.equals(name, topic.name) && Objects.equals(group.getId(), topic.group.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name);
+        return Objects.hash(id, name, group.getId());
     }
 
     @Override
@@ -75,6 +111,7 @@ public class Topic {
         return "Topic{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", group id=" + group.getId() +
                 '}';
     }
 }

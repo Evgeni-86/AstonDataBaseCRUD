@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * class to convert result set to topic message
+ * class to convert resultSet to topic message
  */
 public class TopicMessageMapper {
     /**

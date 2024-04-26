@@ -1,7 +1,8 @@
 # AstonDataBaseCRUD
 
 ## Description
-#### Simple CRUD web application to create topics and messages in them
+#### Simple CRUD web application to create groups, topics and messages in them
+#### Group can have many topics and topics can belong to several groups
 #### Programming language - pure JAVA 17
 #### Database - Postgres 15
 #### Database is initialized after starting the context
@@ -16,15 +17,27 @@
 
 ## REST API
 
+## Group
+### GET : /crud_app/groups/ - get all groups
+### GET : /crud_app/groups/{id} - get group by id
+### POST : /crud_app/groups/ - create new topic
+#### Json body example
+#### {"name":"new group name"}
+### PUT : /crud_app/groups/ - update group
+#### Json body example
+#### {"id":groupId,"name":"group name update"}
+### DELETE : /crud_app/groups/{id} - delete group by id
+
 ## Topic
 ### GET : /crud_app/topics/ - get all topics
+### GET : /crud_app/topics/group/{id} - get all topic by group id
 ### GET : /crud_app/topics/{id} - get topic by id
 ### POST : /crud_app/topics/ - create new topic
 #### Json body example
-#### {"name":"new topic name"}
+#### {"groupId":groupId,"name":"new topic name"}
 ### PUT : /crud_app/topics/ - update topic
 #### Json body example
-#### {"id":topicId,"name":"topic name update"}
+#### {"id":topicId,"groupId":groupId,"name":"topic name update"}
 ### DELETE : /crud_app/topics/{id} - delete topic by id
 
 ## Message

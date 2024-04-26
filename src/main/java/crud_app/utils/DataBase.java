@@ -56,12 +56,29 @@ public class DataBase {
         Connection connectionDB = DataBase.getConnection();
         try (Statement statement = connectionDB.createStatement()) {
             statement.addBatch("DROP TABLE IF EXISTS topic_messages");
+            statement.addBatch("DROP TABLE IF EXISTS topic_groups");
             statement.addBatch("DROP TABLE IF EXISTS topics");
+            statement.addBatch("DROP TABLE IF EXISTS groups");
+
+            statement.addBatch("""
+                    CREATE TABLE groups (
+                    id   SERIAL PRIMARY KEY,
+                    name VARCHAR(50) NOT NULL,
+                    CONSTRAINT group_name_unique UNIQUE (name))
+                    """);
             statement.addBatch("""
                     CREATE TABLE topics (
                     id   SERIAL PRIMARY KEY,
                     name VARCHAR(50) NOT NULL,
                     CONSTRAINT topic_name_unique UNIQUE (name))
+                    """);
+            statement.addBatch("""
+                    CREATE TABLE topic_groups (
+                    group_id INTEGER NOT NULL,
+                    topic_id INTEGER NOT NULL,
+                    CONSTRAINT topic_groups_idx UNIQUE (group_id, topic_id),
+                    FOREIGN KEY (topic_id) REFERENCES topics (id) ON DELETE CASCADE,
+                    FOREIGN KEY (group_id) REFERENCES groups (id) ON DELETE CASCADE)
                     """);
             statement.addBatch("""
                     CREATE TABLE topic_messages (

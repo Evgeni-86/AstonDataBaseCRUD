@@ -1,7 +1,11 @@
 package crud_app.web.servlet;
 
+import crud_app.dto.GroupDto;
 import crud_app.dto.TopicDto;
 import crud_app.AbstractTest;
+import crud_app.entity.Group;
+import crud_app.repository.GroupRepository;
+import crud_app.repository.impl.GroupRepositoryImpl;
 import crud_app.service.TopicService;
 import crud_app.service.impl.TopicServiceImpl;
 import crud_app.utils.DataBase;
@@ -24,6 +28,14 @@ class TopicServletTest extends AbstractTest {
 
     private TopicService topicService = new TopicServiceImpl();
 
+    private static GroupRepository groupRepository;
+    private static Group groupForTest;
+
+    @BeforeAll
+    static void init() {
+        groupRepository = new GroupRepositoryImpl();
+        groupForTest = groupRepository.createGroup(new Group("TopicServletTest"));
+    }
 
     @BeforeEach
     public void setUp() {
@@ -34,11 +46,13 @@ class TopicServletTest extends AbstractTest {
 
     @Test
     @DisplayName("get all topics")
-    public void doGet1() throws Exception {
+    void doGet0() throws Exception {
         DataBase.initDataBase();
         //Arrange
-        TopicDto topic1 = new TopicDto("topic doGet1 1");
-        TopicDto topic2 = new TopicDto("topic doGet1 2");
+        Group group = new Group("TopicServletTest");
+        groupForTest = groupRepository.createGroup(group);
+        TopicDto topic1 = new TopicDto("topic doGet1 1", groupForTest.getId());
+        TopicDto topic2 = new TopicDto("topic doGet1 2", groupForTest.getId());
         topicService.create(topic1);
         topicService.create(topic2);
         Mockito.when(request.getPathInfo()).thenReturn("/");
@@ -48,8 +62,31 @@ class TopicServletTest extends AbstractTest {
         SUT.doGet(request, response);
         //Assert
         String expected = String
-                .format("[{\"id\":%d,\"name\":\"topic doGet1 1\"},{\"id\":%d,\"name\":\"topic doGet1 2\"}]",
-                        topic1.getId(), topic2.getId());
+                .format("[{\"id\":%d,\"groupId\":%d,\"name\":\"topic doGet1 1\"},{\"id\":%d,\"groupId\":%d,\"name\":\"topic doGet1 2\"}]",
+                        topic1.getId(), group.getId(), topic2.getId(), group.getId());
+        Assertions.assertEquals(expected, stringWriter.toString());
+    }
+
+    @Test
+    @DisplayName("get all topics by group")
+    void doGet1() throws Exception {
+        DataBase.initDataBase();
+        //Arrange
+        Group group = new Group("TopicServletTest");
+        groupForTest = groupRepository.createGroup(group);
+        TopicDto topic1 = new TopicDto("topic doGet1 1", groupForTest.getId());
+        TopicDto topic2 = new TopicDto("topic doGet1 2", groupForTest.getId());
+        topicService.create(topic1);
+        topicService.create(topic2);
+        Mockito.when(request.getPathInfo()).thenReturn("/group/" + groupForTest.getId());
+        StringWriter stringWriter = new StringWriter();
+        Mockito.when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
+        //Act
+        SUT.doGet(request, response);
+        //Assert
+        String expected = String
+                .format("[{\"id\":%d,\"groupId\":%d,\"name\":\"topic doGet1 1\"},{\"id\":%d,\"groupId\":%d,\"name\":\"topic doGet1 2\"}]",
+                        topic1.getId(), group.getId(), topic2.getId(), group.getId());
         Assertions.assertEquals(expected, stringWriter.toString());
     }
 
@@ -57,7 +94,7 @@ class TopicServletTest extends AbstractTest {
     @DisplayName("get topic by id")
     void doGet2() throws IOException {
         //Arrange
-        TopicDto topic = new TopicDto("topic doGet2");
+        TopicDto topic = new TopicDto("topic doGet2", groupForTest.getId());
         topicService.create(topic);
         Mockito.when(request.getPathInfo()).thenReturn("/" + topic.getId());
         StringWriter stringWriter = new StringWriter();
@@ -65,7 +102,7 @@ class TopicServletTest extends AbstractTest {
         //Act
         SUT.doGet(request, response);
         //Assert
-        String expected = String.format("{\"id\":%d,\"name\":\"topic doGet2\"}", topic.getId());
+        String expected = String.format("{\"id\":%d,\"groupId\":%d,\"name\":\"topic doGet2\"}", topic.getId(), groupForTest.getId());
         Assertions.assertEquals(expected, stringWriter.toString());
     }
 
@@ -78,8 +115,7 @@ class TopicServletTest extends AbstractTest {
         StringWriter stringWriter = new StringWriter();
         Mockito.when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
 
-//        StringReader stringReader = new StringReader("{\"id\":0,\"name\":\"topic doPost\"}");
-        StringReader stringReader = new StringReader("{\"name\":\"topic doPost\"}");
+        StringReader stringReader = new StringReader(String.format("{\"groupId\":%d,\"name\":\"topic doPost\"}", groupForTest.getId()));
         BufferedReader bufferedReader = new BufferedReader(stringReader);
         Mockito.when(request.getReader()).thenReturn(bufferedReader);
         //Act
@@ -91,7 +127,7 @@ class TopicServletTest extends AbstractTest {
                 .collect(Collectors.joining());
         int newId = Integer.parseInt(number);
         Assertions.assertTrue(stringWriter.toString().contains("new topic save id = " + newId));
-        TopicDto savedTopic = new TopicDto(newId, "topic doPost");
+        TopicDto savedTopic = new TopicDto(newId, groupForTest.getId(), "topic doPost");
         Assertions.assertEquals(savedTopic, topicService.get(newId));
     }
 
@@ -99,21 +135,22 @@ class TopicServletTest extends AbstractTest {
     @DisplayName("update topic")
     void doPut() throws IOException {
         //Arrange
-        TopicDto topicDto = new TopicDto("topic doPut");
+        TopicDto topicDto = new TopicDto("topic doPut", groupForTest.getId());
         topicService.create(topicDto);
 
         Mockito.when(request.getPathInfo()).thenReturn("/");
         StringWriter stringWriter = new StringWriter();
         Mockito.when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
 
-        StringReader stringReader = new StringReader(String.format("{\"id\":%d,\"name\":\"topic doPut update\"}", topicDto.getId()));
+        StringReader stringReader = new StringReader(String.format("{\"id\":%d,\"groupId\":%d,\"name\":\"topic doPut update\"}",
+                topicDto.getId(), groupForTest.getId()));
         BufferedReader bufferedReader = new BufferedReader(stringReader);
         Mockito.when(request.getReader()).thenReturn(bufferedReader);
         //Act
         SUT.doPut(request, response);
         //Assert
         Assertions.assertTrue(stringWriter.toString().contains("topic update id = " + topicDto.getId()));
-        TopicDto topicUpdate = new TopicDto(topicDto.getId(), "topic doPut update");
+        TopicDto topicUpdate = new TopicDto(topicDto.getId(), groupForTest.getId(), "topic doPut update");
         Assertions.assertEquals(topicUpdate, topicService.get(topicUpdate.getId()));
     }
 
@@ -121,7 +158,7 @@ class TopicServletTest extends AbstractTest {
     @DisplayName("delete topic by id")
     void doDelete() throws IOException {
         //Arrange
-        TopicDto topic = new TopicDto("topic doDelete");
+        TopicDto topic = new TopicDto("topic doDelete", groupForTest.getId());
         topicService.create(topic);
         Mockito.when(request.getPathInfo()).thenReturn("/" + topic.getId());
         StringWriter stringWriter = new StringWriter();

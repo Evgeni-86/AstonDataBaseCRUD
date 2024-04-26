@@ -32,8 +32,8 @@ public class TopicMessageServiceImpl implements TopicMessageService {
     @Override
     public TopicMessageDto create(TopicMessageDto topicMessageDto) {
         TopicMessage message = topicMessageFactory.getTopicMessage(topicMessageDto);
-        messageRepository.createMessage(message);
-        topicMessageDto.setId(message.getId());
+        TopicMessage savedTopicMessage = messageRepository.createMessage(message);
+        topicMessageDto.setId(savedTopicMessage.getId());
         return topicMessageDto;
     }
 
@@ -81,7 +81,7 @@ public class TopicMessageServiceImpl implements TopicMessageService {
     @Override
     public List<TopicMessageDto> getAllMessage(int topicId) {
         return messageRepository.getAllMessageTopic(topicId).stream()
-                .map(e -> TopicMessageDto.toDTO(e))
+                .map(TopicMessageDto::toDTO)
                 .sorted(Comparator.comparingInt(TopicMessageDto::getId)).toList();
     }
 }

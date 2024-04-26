@@ -19,8 +19,13 @@ public class RequestValidation {
         if (splits.length == 2 || splits[1].matches("-?\\d+"))
             return Collections.singletonMap("/id", Integer.parseInt(splits[1]));
 
-        if (splits.length == 3 && splits[2].matches("-?\\d+"))
-            return Collections.singletonMap("/topic/id", Integer.parseInt(splits[2]));
+        if (splits.length == 3 && splits[2].matches("-?\\d+")) {
+            if (pathInfo.contains("group")) {
+                return Collections.singletonMap("/group/id", Integer.parseInt(splits[2]));
+            } else if (pathInfo.contains("topic")) {
+                return Collections.singletonMap("/topic/id", Integer.parseInt(splits[2]));
+            }
+        }
 
         return Collections.singletonMap(null, null);
     }

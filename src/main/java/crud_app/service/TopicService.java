@@ -1,6 +1,8 @@
 package crud_app.service;
 
+import crud_app.dto.GroupDto;
 import crud_app.dto.TopicDto;
+import crud_app.entity.Group;
 
 import java.util.List;
 
@@ -41,9 +43,17 @@ public interface TopicService {
     boolean remove(int topicId);
 
     /**
-     * method get all topics dto
+     * method return list topics dto by group id
+     *
+     * @param groupId group id in database
+     * @return list topics dto
+     */
+    List<TopicDto> getAllTopicGroup(int groupId);
+
+    /**
+     * method return list all topics
      *
      * @return list topics dto
      */
-    List<TopicDto> getAll();
+    List<TopicDto> getAllTopic();
 }

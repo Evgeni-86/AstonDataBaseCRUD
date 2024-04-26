@@ -17,11 +17,10 @@ public class TopicMessageFactory {
     public TopicMessage getTopicMessage(TopicMessageDto topicMessageDto) {
         Topic topic = new Topic();
         topic.setId(topicMessageDto.getTopicId());
-        TopicMessage message = new TopicMessage(
+        return new TopicMessage(
                 topicMessageDto.getId(),
                 topicMessageDto.getTitle(),
                 topicMessageDto.getBody(),
                 topic);
-        return message;
     }
 }
