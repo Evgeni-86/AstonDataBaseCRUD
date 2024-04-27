@@ -20,7 +20,7 @@
 ## Group
 ### GET : /crud_app/groups/ - get all groups
 ### GET : /crud_app/groups/{id} - get group by id
-### POST : /crud_app/groups/ - create new topic
+### POST : /crud_app/groups/ - create new group
 #### Json body example
 #### {"name":"new group name"}
 ### PUT : /crud_app/groups/ - update group

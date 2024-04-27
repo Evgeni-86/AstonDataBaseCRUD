@@ -1,5 +1,6 @@
 package crud_app.entity;
 
+import java.util.List;
 import java.util.Objects;
 
 
@@ -15,6 +16,10 @@ public class Group {
      * group name
      */
     private String name;
+    /**
+     * list topics
+     */
+    private List<Topic> topics;
 
     /**
      * group no args constructor
@@ -56,6 +61,14 @@ public class Group {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<Topic> getTopics() {
+        return topics;
+    }
+
+    public void setTopics(List<Topic> topics) {
+        this.topics = topics;
     }
 
     @Override

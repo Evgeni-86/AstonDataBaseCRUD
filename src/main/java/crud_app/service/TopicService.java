@@ -1,8 +1,6 @@
 package crud_app.service;
 
-import crud_app.dto.GroupDto;
 import crud_app.dto.TopicDto;
-import crud_app.entity.Group;
 
 import java.util.List;
 

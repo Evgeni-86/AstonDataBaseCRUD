@@ -1,10 +1,8 @@
 package crud_app.repository.impl;
 
-import crud_app.entity.Group;
 import crud_app.entity.Topic;
 import crud_app.repository.TopicRepository;
 import crud_app.utils.DataBase;
-import crud_app.utils.GroupMapper;
 import crud_app.utils.TopicMapper;
 
 import java.sql.*;

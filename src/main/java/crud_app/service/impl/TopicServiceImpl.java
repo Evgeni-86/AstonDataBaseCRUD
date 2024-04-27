@@ -1,15 +1,11 @@
 package crud_app.service.impl;
 
-import crud_app.dto.GroupDto;
 import crud_app.dto.TopicDto;
-import crud_app.dto.TopicMessageDto;
 import crud_app.entity.Topic;
-import crud_app.entity.TopicMessage;
 import crud_app.repository.TopicRepository;
 import crud_app.repository.impl.TopicRepositoryImpl;
 import crud_app.service.TopicService;
 import crud_app.utils.TopicFactory;
-import crud_app.utils.TopicMessageFactory;
 
 import java.util.Comparator;
 import java.util.List;

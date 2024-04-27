@@ -1,7 +1,6 @@
 package crud_app.repository;
 
 import crud_app.entity.Topic;
-import crud_app.entity.TopicMessage;
 
 import java.util.List;
 

@@ -1,13 +1,9 @@
 package crud_app.service.impl;
 
 import crud_app.dto.GroupDto;
-import crud_app.dto.TopicDto;
 import crud_app.entity.Group;
-import crud_app.entity.Topic;
 import crud_app.repository.GroupRepository;
-import crud_app.repository.TopicRepository;
 import crud_app.repository.impl.GroupRepositoryImpl;
-import crud_app.repository.impl.TopicRepositoryImpl;
 import crud_app.service.GroupService;
 
 import java.util.Comparator;

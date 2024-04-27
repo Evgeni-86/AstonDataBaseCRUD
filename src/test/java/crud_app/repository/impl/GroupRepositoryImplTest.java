@@ -2,6 +2,7 @@ package crud_app.repository.impl;
 
 import crud_app.AbstractTest;
 import crud_app.entity.Group;
+import crud_app.entity.Topic;
 import crud_app.utils.DataBase;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -14,6 +15,7 @@ import java.util.List;
 class GroupRepositoryImplTest extends AbstractTest {
 
     private GroupRepositoryImpl SUT = new GroupRepositoryImpl();
+    private TopicRepositoryImpl topicRepository = new TopicRepositoryImpl();
 
     @Test
     @DisplayName("create new group")
@@ -74,12 +76,21 @@ class GroupRepositoryImplTest extends AbstractTest {
     void getAllGroup() {
         //Arrange
         DataBase.initDataBase();
+        Group group1 = new Group("getAllGroup Group1");
+        Group group2 = new Group("getAllGroup Group2");
+        Group group3 = new Group("getAllGroup Group3");
         List<Group> expected = new ArrayList<>() {{
-            add(new Group("getAllGroup Group1"));
-            add(new Group("getAllGroup Group2"));
-            add(new Group("getAllGroup Group3"));
+            add(group1);
+            add(group2);
+            add(group3);
         }};
         expected.forEach(group -> SUT.createGroup(group));
+        Topic topic1 = new Topic("new topic1", group2);
+        Topic topic2 = new Topic("new topic2", group2);
+        Topic topic3 = new Topic("new topic3", group1);
+        topicRepository.createTopic(topic1);
+        topicRepository.createTopic(topic2);
+        topicRepository.createTopic(topic3);
         //Act
         List<Group> actual = SUT.getAllGroup();
         //Assert

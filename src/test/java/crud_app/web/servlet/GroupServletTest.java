@@ -34,14 +34,14 @@ class GroupServletTest extends AbstractTest {
     private TopicService topicService = new TopicServiceImpl();
     private TopicMessageService topicMessageService = new TopicMessageServiceImpl();
 
-    private static GroupRepository groupRepository;
-    private static Group groupForTest;
+//    private static GroupRepository groupRepository = new GroupRepositoryImpl();
+//    private static Group groupForTest;
 
-    @BeforeAll
-    static void init() {
-        groupRepository = new GroupRepositoryImpl();
-        groupForTest = groupRepository.createGroup(new Group("GroupServletTest"));
-    }
+//    @BeforeAll
+//    static void init() {
+//        groupRepository = new GroupRepositoryImpl();
+//        groupForTest = groupRepository.createGroup(new Group("GroupServletTest"));
+//    }
 
     @BeforeEach
     public void setUp() {

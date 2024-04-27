@@ -2,12 +2,8 @@ package crud_app.repository.impl;
 
 import crud_app.entity.Group;
 import crud_app.entity.Topic;
-import crud_app.entity.TopicMessage;
 import crud_app.repository.GroupRepository;
 import crud_app.utils.DataBase;
-import crud_app.utils.GroupMapper;
-import crud_app.utils.TopicMapper;
-import crud_app.utils.TopicMessageMapper;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -31,8 +27,11 @@ public class GroupRepositoryImpl implements GroupRepository {
      * sql query for read group
      */
     private final String readQuery = """
-            SELECT * FROM groups
-            WHERE id = ?
+            SELECT g.name AS "group_name", g.id AS "group_id", t.name AS "topic_name", t.id AS "topic_id"
+            FROM groups AS g
+            LEFT JOIN topic_groups ON topic_groups.group_id = g.id
+            LEFT JOIN topics AS t ON topic_groups.topic_id = t.id
+            WHERE g.id = ?
             """;
     /**
      * sql query for update group
@@ -52,7 +51,11 @@ public class GroupRepositoryImpl implements GroupRepository {
      * sql query for get all groups
      */
     private final String getAllGroupQuery = """
-            SELECT * FROM groups
+            SELECT g.name AS "group_name", g.id AS "group_id", t.name AS "topic_name", t.id AS "topic_id"
+            FROM groups AS g
+            LEFT JOIN topic_groups ON topic_groups.group_id = g.id
+            LEFT JOIN topics AS t ON topic_groups.topic_id = t.id
+            ORDER BY g.id
             """;
 
     /**
@@ -110,8 +113,26 @@ public class GroupRepositoryImpl implements GroupRepository {
         try (PreparedStatement preparedStatement = DataBase.getConnection().prepareStatement(readQuery)) {
             preparedStatement.setInt(1, groupId);
             ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) return GroupMapper.mapGroup(resultSet);
-            else throw new RuntimeException("not row to map");
+
+            Group currentGroup = null;
+            while (resultSet.next()) {
+
+                if (currentGroup == null) {
+                    currentGroup = new Group(resultSet.getInt("group_id"), resultSet.getString("group_name"));
+                    currentGroup.setTopics(new ArrayList<>());
+                }
+
+                int currentTopicId = resultSet.getInt("topic_id");
+                if (currentTopicId != 0) {
+                    Topic topic = new Topic(currentTopicId, resultSet.getString("topic_name"));
+                    topic.setGroup(currentGroup);
+                    currentGroup.getTopics().add(topic);
+                }
+            }
+
+            if (currentGroup == null) throw new RuntimeException("not row to map");
+            else return currentGroup;
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -145,8 +166,26 @@ public class GroupRepositoryImpl implements GroupRepository {
         List<Group> groupList = new ArrayList<>();
         try (PreparedStatement preparedStatement = DataBase.getConnection().prepareStatement(getAllGroupQuery)) {
             ResultSet resultSet = preparedStatement.executeQuery();
+
+            int tempId = 0;
+            Group currentGroup = null;
             while (resultSet.next()) {
-                groupList.add(GroupMapper.mapGroup(resultSet));
+
+                int currentId = resultSet.getInt("group_id");
+                if (currentId != tempId) {
+                    Group group = new Group(currentId, resultSet.getString("group_name"));
+                    group.setTopics(new ArrayList<>());
+                    groupList.add(group);
+                    currentGroup = group;
+                    tempId = group.getId();
+                }
+
+                int currentTopicId = resultSet.getInt("topic_id");
+                if (currentTopicId != 0) {
+                    Topic topic = new Topic(currentTopicId, resultSet.getString("topic_name"));
+                    topic.setGroup(currentGroup);
+                    currentGroup.getTopics().add(topic);
+                }
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
