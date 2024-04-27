@@ -32,8 +32,8 @@ public class TopicRepositoryImpl implements TopicRepository {
     private final String readQuery = """
             SELECT t.name AS "topic_name", t.id AS "topic_id", g.name AS "group_name", g.id AS "group_id"
             FROM topics AS t
-            JOIN topic_groups ON topic_groups.topic_id = t.id
-            JOIN groups AS g ON topic_groups.group_id = g.id
+            LEFT JOIN topic_groups ON topic_groups.topic_id = t.id
+            LEFT JOIN groups AS g ON topic_groups.group_id = g.id
             WHERE t.id = ?
             """;
     /**
@@ -66,8 +66,8 @@ public class TopicRepositoryImpl implements TopicRepository {
     private final String getAllTopicQuery = """
             SELECT t.name AS "topic_name", t.id AS "topic_id", g.name AS "group_name", g.id AS "group_id"
             FROM topics AS t
-            JOIN topic_groups ON topic_groups.topic_id = t.id
-            JOIN groups AS g ON topic_groups.group_id = g.id
+            LEFT JOIN topic_groups ON topic_groups.topic_id = t.id
+            LEFT JOIN groups AS g ON topic_groups.group_id = g.id
             """;
 
     /**
@@ -82,24 +82,22 @@ public class TopicRepositoryImpl implements TopicRepository {
         if (topic.getGroup().getId() == 0) throw new IllegalStateException("group id not must be 0");
 
         Connection connection = DataBase.getConnection();
-        try {
+        try (PreparedStatement preparedStatementTopic = connection.prepareStatement(createQuery, Statement.RETURN_GENERATED_KEYS);
+             PreparedStatement preparedStatementTopicGroups = connection.prepareStatement(saveInTopicGroupsQuery)) {
             connection.setAutoCommit(false);
 
-            PreparedStatement preparedStatementTopic =
-                    DataBase.getConnection().prepareStatement(createQuery, Statement.RETURN_GENERATED_KEYS);
             preparedStatementTopic.setString(1, topic.getName());
             preparedStatementTopic.executeUpdate();
             ResultSet generatedKeys = preparedStatementTopic.getGeneratedKeys();
             generatedKeys.next();
             topic.setId(generatedKeys.getInt(1));
 
-            PreparedStatement preparedStatementTopicGroups =
-                    DataBase.getConnection().prepareStatement(saveInTopicGroupsQuery);
             preparedStatementTopicGroups.setInt(1, topic.getGroup().getId());
             preparedStatementTopicGroups.setInt(2, topic.getId());
             preparedStatementTopicGroups.execute();
 
             connection.commit();
+            connection.setAutoCommit(true);
         } catch (Exception ex) {
             try {
                 connection.rollback();
