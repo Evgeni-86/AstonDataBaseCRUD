@@ -167,17 +167,14 @@ public class GroupRepositoryImpl implements GroupRepository {
         try (PreparedStatement preparedStatement = DataBase.getConnection().prepareStatement(getAllGroupQuery)) {
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            int tempId = 0;
             Group currentGroup = null;
             while (resultSet.next()) {
 
                 int currentId = resultSet.getInt("group_id");
-                if (currentId != tempId) {
-                    Group group = new Group(currentId, resultSet.getString("group_name"));
-                    group.setTopics(new ArrayList<>());
-                    groupList.add(group);
-                    currentGroup = group;
-                    tempId = group.getId();
+                if (currentGroup == null || currentId != currentGroup.getId()) {
+                    currentGroup = new Group(currentId, resultSet.getString("group_name"));
+                    currentGroup.setTopics(new ArrayList<>());
+                    groupList.add(currentGroup);
                 }
 
                 int currentTopicId = resultSet.getInt("topic_id");

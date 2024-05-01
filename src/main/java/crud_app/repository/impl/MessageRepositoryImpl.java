@@ -1,8 +1,10 @@
 package crud_app.repository.impl;
 
+import crud_app.entity.Topic;
 import crud_app.entity.TopicMessage;
 import crud_app.repository.MessageRepository;
 import crud_app.utils.DataBase;
+import crud_app.utils.TopicMapper;
 import crud_app.utils.TopicMessageMapper;
 
 import java.sql.PreparedStatement;
@@ -20,39 +22,41 @@ public class MessageRepositoryImpl implements MessageRepository {
      * sql query for save message
      */
     private final String createQuery = """
-            INSERT INTO topic_messages (topic_id, title, body) 
+            INSERT INTO topic_messages (topic_id, title, body)
             VALUES (?, ?, ?)
             """;
     /**
      * sql query for read message
      */
     private final String readQuery = """
-            SELECT * FROM topic_messages 
-            JOIN topics ON topic_messages.topic_id = topics.id 
-            WHERE topic_messages.id = ?
+            SELECT m.id AS message_id, m.title AS message_title, m.body AS message_body, t.id AS topic_id, t.name AS topic_name
+            FROM topic_messages AS m
+            JOIN topics AS t ON m.topic_id = t.id
+            WHERE m.id = ?
             """;
     /**
      * sql query for update message
      */
     private final String updateQuery = """
-            UPDATE topic_messages 
-            SET topic_id = ?, title = ?, body = ? 
+            UPDATE topic_messages
+            SET topic_id = ?, title = ?, body = ?
             WHERE id = ?
             """;
     /**
      * sql query for remove message
      */
     private final String removeQuery = """
-            DELETE FROM topic_messages 
+            DELETE FROM topic_messages
             WHERE id = ?
             """;
     /**
      * sql query for get all message one topic
      */
     private final String getAllMessageTopicQuery = """
-            SELECT * FROM topic_messages 
-            JOIN topics ON topic_messages.topic_id = topics.id 
-            WHERE topic_id = ?
+            SELECT m.id AS message_id, m.title AS message_title, m.body AS message_body, t.id AS topic_id, t.name AS topic_name
+            FROM topic_messages AS m
+            JOIN topics AS t ON m.topic_id = t.id
+            WHERE m.topic_id = ?
             """;
 
     /**
@@ -115,7 +119,12 @@ public class MessageRepositoryImpl implements MessageRepository {
         try (PreparedStatement preparedStatement = DataBase.getConnection().prepareStatement(readQuery)) {
             preparedStatement.setInt(1, messageId);
             ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) return TopicMessageMapper.mapTopicMessage(resultSet);
+            if (resultSet.next()){
+                TopicMessage topicMessage = TopicMessageMapper.mapTopicMessage(resultSet);
+                Topic topic = TopicMapper.mapTopic(resultSet);
+                topicMessage.setTopic(topic);
+                return topicMessage;
+            }
             else throw new RuntimeException("not row to map");
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -153,7 +162,10 @@ public class MessageRepositoryImpl implements MessageRepository {
             preparedStatement.setInt(1, topicId);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                topicMessageList.add(TopicMessageMapper.mapTopicMessage(resultSet));
+                TopicMessage topicMessage = TopicMessageMapper.mapTopicMessage(resultSet);
+                Topic topic = TopicMapper.mapTopic(resultSet);
+                topicMessage.setTopic(topic);
+                topicMessageList.add(topicMessage);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

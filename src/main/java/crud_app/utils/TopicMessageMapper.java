@@ -1,6 +1,5 @@
 package crud_app.utils;
 
-import crud_app.entity.Topic;
 import crud_app.entity.TopicMessage;
 
 import java.sql.ResultSet;
@@ -18,12 +17,9 @@ public class TopicMessageMapper {
      * @throws SQLException if result set read error
      */
     public static TopicMessage mapTopicMessage(ResultSet resultSet) throws SQLException {
-        Topic topic = new Topic(resultSet.getInt("topic_id"), resultSet.getString("name"));
-
         return new TopicMessage(
-                resultSet.getInt("id"),
-                resultSet.getString("title"),
-                resultSet.getString("body"),
-                topic);
+                resultSet.getInt("message_id"),
+                resultSet.getString("message_title"),
+                resultSet.getString("message_body"));
     }
 }

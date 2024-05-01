@@ -1,8 +1,10 @@
 package crud_app.repository.impl;
 
+import crud_app.entity.Group;
 import crud_app.entity.Topic;
 import crud_app.repository.TopicRepository;
 import crud_app.utils.DataBase;
+import crud_app.utils.GroupMapper;
 import crud_app.utils.TopicMapper;
 
 import java.sql.*;
@@ -40,14 +42,14 @@ public class TopicRepositoryImpl implements TopicRepository {
      * sql query for update topic
      */
     private final String updateQuery = """
-            UPDATE topics SET name = ? 
+            UPDATE topics SET name = ?
             WHERE id = ?
             """;
     /**
      * sql query for remove topic
      */
     private final String removeQuery = """
-            DELETE FROM topics 
+            DELETE FROM topics
             WHERE id = ?
             """;
     /**
@@ -142,7 +144,12 @@ public class TopicRepositoryImpl implements TopicRepository {
         try (PreparedStatement preparedStatement = DataBase.getConnection().prepareStatement(readQuery)) {
             preparedStatement.setInt(1, topicId);
             ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) return TopicMapper.mapTopic(resultSet);
+            if (resultSet.next()) {
+                Group group = GroupMapper.mapGroup(resultSet);
+                Topic topic = TopicMapper.mapTopic(resultSet);
+                topic.setGroup(group);
+                return topic;
+            }
             else throw new RuntimeException("not row to map");
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -180,7 +187,10 @@ public class TopicRepositoryImpl implements TopicRepository {
             preparedStatement.setInt(1, groupId);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                topicList.add(TopicMapper.mapTopic(resultSet));
+                Group group = GroupMapper.mapGroup(resultSet);
+                Topic topic = TopicMapper.mapTopic(resultSet);
+                topic.setGroup(group);
+                topicList.add(topic);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -199,7 +209,10 @@ public class TopicRepositoryImpl implements TopicRepository {
         try (PreparedStatement preparedStatement = DataBase.getConnection().prepareStatement(getAllTopicQuery)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                topicList.add(TopicMapper.mapTopic(resultSet));
+                Group group = GroupMapper.mapGroup(resultSet);
+                Topic topic = TopicMapper.mapTopic(resultSet);
+                topic.setGroup(group);
+                topicList.add(topic);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

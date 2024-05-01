@@ -1,6 +1,5 @@
 package crud_app.utils;
 
-import crud_app.entity.Group;
 import crud_app.entity.Topic;
 
 import java.sql.ResultSet;
@@ -18,11 +17,8 @@ public class TopicMapper {
      * @throws SQLException if resultSet read error
      */
     public static Topic mapTopic(ResultSet resultSet) throws SQLException {
-        Group group = new Group(resultSet.getInt("group_id"),
-                resultSet.getString("group_name"));
         return new Topic(
                 resultSet.getInt("topic_id"),
-                resultSet.getString("topic_name"),
-                group);
+                resultSet.getString("topic_name"));
     }
 }
